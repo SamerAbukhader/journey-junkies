@@ -1,5 +1,4 @@
-const router = require("express").Router();
-const pool = require("./DB/index");
+import pool from "../DB/index.js";
 
 // get user info by id
 router.get("/:id", async (req, res) => {
