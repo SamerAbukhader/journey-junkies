@@ -1,14 +1,14 @@
 import express from "express";
 import pool from "../DB/index.js";
 import dotenv from "dotenv";
-import clerk from "@clerk/clerk-sdk-node";
+import clerkClient from "@clerk/clerk-sdk-node";
 
 const Admin = express.Router();
 
 // ========= GET ALL USERS ========= //
 Admin.get("/", async (_req, res) => {
   try {
-    const users = await clerk.users.getUserList();
+    const users = await clerkClient.users.getUserList();
     const filteredUsers = users.filter((user) => !!user.firstName);
 
     res.json(filteredUsers);
@@ -78,7 +78,7 @@ Admin.put("/:id", async (req, res) => {
 Admin.delete("/:id", async (req, res) => {
   const { id } = req.body;
   try {
-    await clerk.users.deleteUser(id);
+    await clerkClient.users.deleteUser(id);
     return res.sendStatus(200); // If the user deletion is successful, this will send a 200 status code back to the client.
   } catch (error) {
     console.error(error);
@@ -90,7 +90,7 @@ Admin.delete("/:id", async (req, res) => {
 Admin.patch("/:id/changeRole", async (req, res) => {
   const { id, isadmin } = req.body;
   try {
-    const user = await clerk.users.updateUser(id, {
+    const user = await clerkClient.users.updateUser(id, {
       unsafeMetadata: {
         admin: isadmin["admin"],
         verified: isadmin["verified"],
@@ -107,7 +107,7 @@ Admin.patch("/:id/changeRole", async (req, res) => {
 Admin.patch("/:id/verify", async (req, res) => {
   const { id, verified } = req.body;
   try {
-    const user = await clerk.users.updateUser(id, {
+    const user = await clerkClient.users.updateUser(id, {
       unsafeMetadata: {
         admin: verified["admin"],
         verified: verified["verified"],

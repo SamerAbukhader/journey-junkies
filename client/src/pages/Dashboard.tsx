@@ -31,12 +31,11 @@ const Dashboard = () => {
   const theme = useMantineTheme();
   const { user } = useUser();
   const [formValue, setFormValue] = useState<"verify" | "delete" | "role">();
-
   const rows = users.map((user: any) => (
     <tr key={user.id}>
       <td>
         <Group spacing="sm">
-          <Avatar size={30} src={user.profileImageUrl} radius={30} />
+          <Avatar size={30} src={user.imageUrl} radius={30} />
           <Text fz="sm" fw={500}>
             <Flex align="center" gap={4}>
               {user.firstName + " " + user.lastName}{" "}
@@ -77,7 +76,7 @@ const Dashboard = () => {
         </Group>
       </td>
       <td>
-        <Form method="post">
+        <Form method="post" style={{ padding: "20px" }}>
           <Menu
             trigger="hover"
             openDelay={100}

@@ -1,5 +1,4 @@
 import { NonIndexRouteObject, redirect, useNavigate } from "react-router-dom";
-import { supabase } from "../context/supabase";
 import axios from "axios";
 
 export const newPostAction: NonIndexRouteObject["action"] = async ({
@@ -14,8 +13,9 @@ export const newPostAction: NonIndexRouteObject["action"] = async ({
     image: data.get("image"),
     tag: data.get("tag"),
     author: data.get("author"),
+    map_coords: data.get("map_coords"),
   };
-  await supabase.from("posts").insert(post);
+  await axios.post("/api/posts", post);
   return redirect("/");
 };
 
@@ -26,9 +26,7 @@ export const postPageActions: NonIndexRouteObject["action"] = async ({
   let formData = await request.formData();
   let intent = formData.get("intent");
   if (intent === "delete") {
-    await supabase.from("posts").delete().eq("id", params.id);
-    await supabase.from("comments").delete().eq("post_id", params.id);
-    await supabase.from("rating").delete().eq("post_id", params.id);
+    await axios.delete(`/api/posts/${params.id}`);
     return redirect("/");
   }
   if (intent === "comment") {
@@ -66,7 +64,7 @@ export const editPostAction: NonIndexRouteObject["action"] = async ({
     tag: data.get("tag"),
     author: data.get("author"),
   };
-  await supabase.from("posts").update(post).eq("id", id);
+  await axios.put(`/api/posts/${id}`, post);
   return redirect(`/${id}`);
 };
 
@@ -97,28 +95,20 @@ const postRating = async (
   rating: Number,
   post_author: string
 ) => {
-  const { data: ratings } = await supabase
-    .from("rating")
-    .select("*")
-    .eq("post_id", postId)
-    .eq("post_author", post_author)
-    .eq("user", user);
+  const { data: ratings } = await axios.get(
+    `/api/ratings/user/${user}/${postId}`
+  );
   if (ratings?.length) {
-    await supabase
-      .from("rating")
-      .update({ rating: rating })
-      .eq("post_id", postId)
-      .eq("post_author", post_author)
-      .eq("user", user);
+    await axios.put(`/api/ratings/${ratings[0].id}`, {
+      rating: rating,
+    });
   } else {
-    await supabase.from("rating").insert([
-      {
-        post_id: postId,
-        user: user,
-        post_author: post_author,
-        rating: rating,
-      },
-    ]);
+    await axios.post("/api/ratings", {
+      post_id: postId,
+      user: user,
+      post_author: post_author,
+      rating: rating,
+    });
   }
 };
 
@@ -128,14 +118,12 @@ const postComment = async (
   user: any,
   author_id: any
 ) => {
-  await supabase.from("comments").insert([
-    {
-      post_id: postId,
-      comment: comment,
-      author: user,
-      author_id: author_id,
-    },
-  ]);
+  await axios.post("/api/comments", {
+    post_id: postId,
+    comment: comment,
+    name: user,
+    user_id: author_id,
+  });
 };
 
 const deleteUser = async (id: string) => {
@@ -146,9 +134,9 @@ const deleteUser = async (id: string) => {
   });
   // if user is deleted, delete all posts and comments and ratings by that user
   if (response.status === 200) {
-    await supabase.from("posts").delete().eq("author", id);
-    await supabase.from("comments").delete().eq("author_id", id);
-    await supabase.from("rating").delete().eq("user", id);
+    await axios.delete(`/api/posts/user/${id}`);
+    await axios.delete(`/api/comments/user/${id}`);
+    await axios.delete(`/api/ratings/user/${id}`);
   }
 };
 

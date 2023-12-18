@@ -28,6 +28,8 @@ import {
 } from "@tabler/icons-react";
 import { timeAgo } from "../utils";
 import { useUser } from "@clerk/clerk-react";
+import { GoogleMap, LoadScript, MarkerF } from "@react-google-maps/api";
+import { useState } from "react";
 
 const useStyles = createStyles((theme) => ({
   title: {
@@ -48,7 +50,10 @@ const Post = () => {
   const submit = useSubmit();
   const navigate = useNavigate();
   const { user } = useUser();
-
+  const [markerPosition, setMarkerPosition] = useState({
+    lat: JSON.parse(post.map_coords).lat,
+    lng: JSON.parse(post.map_coords).lng,
+  });
   return (
     <Center my="xl">
       <Container>
@@ -110,6 +115,15 @@ const Post = () => {
             width="100%"
             mih="100%"
           />
+          <LoadScript googleMapsApiKey="AIzaSyB_dpImNu2XvLmYc91JsHg_Ll5bUlvqJpQ">
+            <GoogleMap
+              mapContainerStyle={{ width: "100%", height: "400px" }}
+              zoom={10}
+              center={markerPosition}
+            >
+              {markerPosition && <MarkerF position={markerPosition} />}
+            </GoogleMap>
+          </LoadScript>
         </Flex>
         {HTMLReactParser(post.content)}
         <Flex justify="center" mt={40}>

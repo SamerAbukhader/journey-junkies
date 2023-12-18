@@ -2,7 +2,6 @@ import { LoaderFunction } from "react-router-dom";
 import { Post } from "../types";
 import axios, { AxiosResponse } from "axios";
 import dummyData, { fetchRandomImages } from "../data";
-import { supabase } from "../context/supabase";
 interface HomePageLoader {
   message: string;
 }
@@ -42,19 +41,11 @@ export const postsLoader = (async ({ request }): Promise<PostsPageLoader> => {
 }) satisfies LoaderFunction;
 
 export const postPageLoader = (async ({ params }): Promise<any> => {
-  const { data: posts } = await supabase
-    .from("posts")
-    .select("*")
-    .eq("id", params.id);
-  const { data: comments } = await supabase
-    .from("comments")
-    .select("*")
-    .eq("post_id", params.id)
-    .order("created_at", { ascending: false });
-  const { data: ratings } = await supabase
-    .from("rating")
-    .select("*")
-    .eq("post_id", params.id);
+  const { data: posts } = await axios.get(`/api/posts/${params.id}`);
+
+  const { data: comments } = await axios.get(`/api/comments/${params.id}`);
+
+  const { data: ratings } = await axios.get(`/api/ratings/${params.id}`);
 
   const post = posts![0] as Post;
   return { post, comments, ratings };
@@ -66,43 +57,29 @@ export const dashboardLoader = async (): Promise<any> => {
 };
 
 export const editPostLoader = (async ({ params }): Promise<Post> => {
-  const { data, error } = await supabase
-    .from("posts")
-    .select("*")
-    .eq("id", params.id);
+  const { data } = await axios.get(`/api/posts/${params.id}`);
 
   const post = data![0] as Post;
-  if (error) {
-    console.error(error);
-  }
   return post;
 }) satisfies LoaderFunction;
 
 export const retrievePosts = async (
   filter: PostsLoaderFilter
 ): Promise<Post[]> => {
-  let query = supabase.from("posts").select("*");
-  if (filter.title) query = query.filter("title", "ilike", `%${filter.title}%`);
-  if (filter.author)
-    query = query.filter("author", "ilike", `%${filter.author}`);
-  if (filter.tag) query = query.filter("tag", "ilike", `%${filter.tag}`);
-  if (filter.location) query = query.filter("location", "eq", filter.location);
-  if (filter.rating) query = query.filter("rating", "gte", filter.rating);
-
-  let { data: posts } = await query;
+  const { data: posts } = await axios.get("/api/posts", {
+    params: {
+      title: filter.title,
+      author: filter.author,
+      tag: filter.tag,
+      location: filter.location,
+    },
+  });
   return posts as Post[];
 };
 
 export const profilePageLoader = (userId: string) =>
   (async () => {
-    const { data: posts } = await supabase
-      .from("posts")
-      .select("*")
-      .eq("author", userId);
-    const { data: ratings } = await supabase
-      .from("rating")
-      .select("created_at, rating")
-      .eq("post_author", userId)
-      .order("created_at", { ascending: false });
+    const { data: posts } = await axios.get(`/api/posts/user/${userId}`);
+    const { data: ratings } = await axios.get(`/api/ratings/user/${userId}`);
     return { ratings, posts };
   }) satisfies LoaderFunction;

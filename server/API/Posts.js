@@ -4,37 +4,37 @@ const posts = express.Router();
 
 // ========= Get All posts (this is the search functionality) ========= //
 posts.get("/", async (req, res) => {
-  const { rating } = req.query;
-  const minRating = parseInt(rating, 10) || null;
-
-  let query = "SELECT * FROM post";
-  let queryParams = [];
-  let conditions = [];
-
-  if (minRating) {
-    conditions.push("rating >= $1");
-    queryParams.push(minRating);
+  const queryParams = [];
+  let query = `SELECT * FROM posts`;
+  if (req.query.title) {
+    queryParams.push(`%${req.query.title}%`);
+    query += ` WHERE title LIKE $${queryParams.length}`;
   }
-
-  if (date) {
-    conditions.push("date >= $" + (queryParams.length + 1));
-    queryParams.push(date);
+  if (req.query.author) {
+    queryParams.push(`%${req.query.author}%`);
+    query += ` WHERE author LIKE $${queryParams.length}`;
   }
-
-  if (username) {
-    conditions.push("username = $" + (queryParams.length + 1));
-    queryParams.push(username);
+  if (req.query.tag) {
+    queryParams.push(`%${req.query.tag}%`);
+    query += ` WHERE tag LIKE $${queryParams.length}`;
   }
-
-  if (conditions.length) {
-    query += " WHERE " + conditions.join(" AND ");
+  if (req.query.location) {
+    queryParams.push(`%${req.query.location}%`);
+    query += ` WHERE location LIKE $${queryParams.length}`;
   }
-
-  query += " ORDER BY date DESC";
 
   try {
-    const { rows } = await pool.query(query, queryParams);
-    res.json(rows);
+    pool.getConnection((err, connection) => {
+      if (err) throw err;
+      connection.query(query, queryParams, (err, rows) => {
+        connection.release(); // return the connection to pool
+        if (!err) {
+          res.send(rows);
+        } else {
+          console.log(err);
+        }
+      });
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send("An error occurred while fetching the posts.");
@@ -42,18 +42,46 @@ posts.get("/", async (req, res) => {
 });
 // ========= CREATE posts ========= //
 posts.post("/", async (req, res) => {
-  const { author, title, content, image, description } = req.body;
+  const {
+    author,
+    title,
+    content,
+    image,
+    description,
+    location,
+    tag,
+    map_coords,
+  } = req.body;
 
-  if (!author || !title || !content || !image || !description) {
+  if (
+    !author ||
+    !title ||
+    !content ||
+    !image ||
+    !description ||
+    !location ||
+    !tag ||
+    !map_coords
+  ) {
     return res.status(400).json({ error: "Missing required parameters" });
   }
 
   try {
-    const uuid = await pool.query(
-      'INSERT INTO "post" (author, title, content, image, description) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-      [author, title, content, image, description]
-    );
-    res.json(uuid.rows[0].id);
+    pool.getConnection((err, connection) => {
+      if (err) throw err;
+      connection.query(
+        "INSERT INTO posts (author, title, content, image, description, location, tag, map_coords) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        [author, title, content, image, description, location, tag, map_coords],
+        (err, rows) => {
+          connection.release(); // return the connection to pool
+          if (!err) {
+            res.send(rows);
+          } else {
+            console.log(err);
+          }
+        }
+      );
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "An error occurred" });
@@ -64,8 +92,17 @@ posts.post("/", async (req, res) => {
 posts.delete("/:id", async (req, res) => {
   const id = req.params.id;
   try {
-    const uuid = await pool.query('DELETE FROM "posts" WHERE id = $1', [id]);
-    res.json({ success: true });
+    pool.getConnection((err, connection) => {
+      if (err) throw err;
+      connection.query("DELETE FROM posts WHERE id = ?", [id], (err, rows) => {
+        connection.release(); // return the connection to pool
+        if (!err) {
+          res.send(rows);
+        } else {
+          console.log(err);
+        }
+      });
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "An error occurred" });
@@ -75,18 +112,36 @@ posts.delete("/:id", async (req, res) => {
 // ========= UPDATE posts ========= //
 posts.put("/:id", async (req, res) => {
   const id = req.params.id;
-  const { author, title, content, banner } = req.body;
+  const { title, content, image, description, location, tag, map_coords } =
+    req.body;
 
-  if (!author || !title || !content || !banner) {
+  if (
+    !title ||
+    !content ||
+    !image ||
+    !description ||
+    !location ||
+    !tag ||
+    !map_coords
+  ) {
     return res.status(400).json({ error: "Missing required parameters" });
   }
-  // I think here we need to find the record by the id and then update it
   try {
-    const uuid = await pool.query(
-      'UPDATE "posts" SET author = $1, title = $2, content = $3, banner = $4 WHERE id = $5',
-      [author, title, content, banner, id]
-    );
-    res.json({ success: true });
+    pool.getConnection((err, connection) => {
+      if (err) throw err;
+      connection.query(
+        "UPDATE posts SET title = ?, content = ?, image = ?, description = ?, location = ?, tag = ?, map_coords = ? WHERE id = ?",
+        [title, content, image, description, location, tag, map_coords, id],
+        (err, rows) => {
+          connection.release(); // return the connection to pool
+          if (!err) {
+            res.send(rows);
+          } else {
+            console.log(err);
+          }
+        }
+      );
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "An error occurred" });
@@ -97,15 +152,74 @@ posts.put("/:id", async (req, res) => {
 posts.get("/:id", async (req, res) => {
   const id = req.params.id;
   try {
-    const uuid = await pool.query('SELECT * FROM "post" WHERE id = $1', [id]);
-    if (uuid.rows.length === 0) {
-      return res.status(404).json({ error: "post not found" });
-    }
-    res.json(uuid.rows[0]);
+    pool.getConnection((err, connection) => {
+      if (err) throw err;
+      connection.query(
+        "SELECT * FROM posts WHERE id = ?",
+        [id],
+        (err, rows) => {
+          connection.release(); // return the connection to pool
+          if (!err) {
+            res.send(rows);
+          } else {
+            console.log(err);
+          }
+        }
+      );
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "An error occurred" });
   }
 });
 
+// ========= GET Post BY Author ========= //
+posts.get("/user/:author", async (req, res) => {
+  const author = req.params.author;
+  try {
+    pool.getConnection((err, connection) => {
+      if (err) throw err;
+      connection.query(
+        "SELECT * FROM posts WHERE author = ?",
+        [author],
+        (err, rows) => {
+          connection.release(); // return the connection to pool
+          if (!err) {
+            res.send(rows);
+          } else {
+            console.log(err);
+          }
+        }
+      );
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred" });
+  }
+});
+
+// ========= DELETE ALL POSTS FOR A USER ========= //
+posts.delete("/user/:author", async (req, res) => {
+  const author = req.params.author;
+  try {
+    pool.getConnection((err, connection) => {
+      if (err) throw err;
+      connection.query(
+        "DELETE FROM posts WHERE author = ?",
+        [author],
+        (err, result) => {
+          connection.release(); // return the connection to pool
+          if (!err) {
+            res.send(result);
+          } else {
+            console.log(err);
+          }
+        }
+      );
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred" });
+  }
+});
 export default posts;

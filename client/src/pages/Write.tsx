@@ -24,11 +24,10 @@ import { IconUpload } from "@tabler/icons-react";
 import { useAuth } from "@clerk/clerk-react";
 import { convertToBase64 } from "../utils";
 import { locations } from "../types/data";
-import { GoogleMap, LoadScript} from '@react-google-maps/api';
+import { GoogleMap, LoadScript } from "@react-google-maps/api";
 import e from "express";
-import {MarkerF} from '@react-google-maps/api'
-import { Autocomplete } from '@react-google-maps/api';
-
+import { MarkerF } from "@react-google-maps/api";
+import { Autocomplete } from "@react-google-maps/api";
 
 const useStyles = createStyles((theme) => ({
   title: {
@@ -49,8 +48,12 @@ const Write = () => {
   const [content, setContent] = useState<string>("");
   const [image, setImage] = useState<string>();
   const { userId } = useAuth();
-  const [markerPosition, setMarkerPosition] = useState({ lat: 37.7749, lng: -122.4194 });
-  const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
+  const [markerPosition, setMarkerPosition] = useState({
+    lat: 37.7749,
+    lng: -122.4194,
+  });
+  const [autocomplete, setAutocomplete] =
+    useState<google.maps.places.Autocomplete | null>(null);
 
   const onPlaceChanged = () => {
     if (autocomplete !== null) {
@@ -59,10 +62,9 @@ const Write = () => {
       const location = place.geometry.location;
       setMarkerPosition({ lat: location.lat(), lng: location.lng() });
     } else {
-      console.log('Autocomplete is not loaded yet!');
+      console.log("Autocomplete is not loaded yet!");
     }
-  }
-
+  };
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -127,37 +129,58 @@ const Write = () => {
           required
           mb={rem(16)}
         />
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '0 auto' }}>
-  <LoadScript googleMapsApiKey="AIzaSyB_dpImNu2XvLmYc91JsHg_Ll5bUlvqJpQ" libraries={["places"]}>
-    <div style={{ width: '100%', maxWidth: '600px', marginBottom: '10px' }}>
-      <Autocomplete
-        onLoad={(autocomplete) => setAutocomplete(autocomplete)}
-        onPlaceChanged={onPlaceChanged}
-      >
-        <input
-          type="text"
-          placeholder="Search location"
-          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+        <Select
+          label="location"
+          placeholder="Post location"
+          data={locations}
+          mb={rem(16)}
+          required
+          name="location"
         />
-      </Autocomplete>
-    </div>
-    <GoogleMap
-      mapContainerStyle={{ width: '100%', height: '400px' }}
-      zoom={10}
-      center={markerPosition}
-      onClick={(e) => {
-        setMarkerPosition({ lat: e.latLng.lat(), lng: e.latLng.lng() });
-      }}
-    >
-      {markerPosition && <MarkerF position={markerPosition} />}
-    </GoogleMap>
-  </LoadScript>
-</div>
-<FileInput
-  label="Banner Image"
-  placeholder="Select image"
-  withAsterisk
-/>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            margin: "0 auto",
+          }}
+        >
+          <LoadScript
+            googleMapsApiKey="AIzaSyB_dpImNu2XvLmYc91JsHg_Ll5bUlvqJpQ"
+            libraries={["places"]}
+          >
+            <div
+              style={{ width: "100%", maxWidth: "600px", marginBottom: "10px" }}
+            >
+              <Autocomplete
+                onLoad={(autocomplete) => setAutocomplete(autocomplete)}
+                onPlaceChanged={onPlaceChanged}
+              >
+                <input
+                  type="text"
+                  placeholder="Search location"
+                  style={{
+                    width: "100%",
+                    padding: "10px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                  }}
+                />
+              </Autocomplete>
+            </div>
+            <GoogleMap
+              mapContainerStyle={{ width: "100%", height: "400px" }}
+              zoom={10}
+              center={markerPosition}
+              onClick={(e) => {
+                setMarkerPosition({ lat: e.latLng.lat(), lng: e.latLng.lng() });
+              }}
+            >
+              {markerPosition && <MarkerF position={markerPosition} />}
+            </GoogleMap>
+          </LoadScript>
+        </div>
+
         <FileInput
           label="Banner Image"
           placeholder="Select image"
@@ -188,6 +211,13 @@ const Write = () => {
           readOnly
           value={String(userId)}
           name="author"
+          display="none"
+          required
+        />
+        <Input
+          readOnly
+          value={JSON.stringify(markerPosition)}
+          name="map_coords"
           display="none"
           required
         />
