@@ -97,7 +97,7 @@ Ratings.get("/user/:user", async (req, res) => {
     pool.getConnection((err, connection) => {
       if (err) throw err;
       connection.query(
-        "SELECT * from ratings WHERE user = ?",
+        "SELECT * from ratings WHERE post_author = ?",
         [user],
         (err, rows) => {
           connection.release(); // return the connection to pool
