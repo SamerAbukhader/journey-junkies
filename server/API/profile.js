@@ -22,39 +22,6 @@ router.get("/delete/:id", async (req, res) => {
   }
 });
 
-// update user info
-router.post("/update", async (req, res) => {
-  const userId = req.body.id;
-  const firstName = req.body.firstName;
-  const lastName = req.body.lastName;
-  const nationality = req.body.nationality;
-  const birthDate = req.body.birthDate;
-  const image = req.body.image;
-
-  if (
-    !userId ||
-    !firstName ||
-    !lastName ||
-    !nationality ||
-    !nationality ||
-    !birthDate ||
-    !image
-  ) {
-    res.sendStatus(400);
-  } else {
-    res.sendStatus(
-      await updateUserInfo(
-        userId,
-        firstName,
-        lastName,
-        nationality,
-        birthDate,
-        image
-      )
-    );
-  }
-});
-
 async function fetchUserInfo(userId) {
   try {
     return (
@@ -74,24 +41,6 @@ async function deleteUser(userId) {
     );
     return 200;
   } catch (e) {
-    return e;
-  }
-}
-
-async function updateUserInfo(
-  userId,
-  firstName,
-  lastName,
-  nationality,
-  birthDate,
-  image
-) {
-  try {
-    await pool.query(`UPDATE public."User" SET firstname = '${firstName}', lastname = '${lastName}',
-       nationality = '${nationality}', birthdate = '${birthDate}', image = '${image}' WHERE id = '${userId}'`);
-    return 200;
-  } catch (e) {
-    console.log(e);
     return e;
   }
 }
