@@ -56,7 +56,11 @@ const ErrorPage = () => {
         cols={2}
         breakpoints={[{ maxWidth: "sm", cols: 1, spacing: 40 }]}
       >
-        <Image src="/images/404.svg" className={classes.mobileImage} />
+        <Image
+          src="/images/404.svg"
+          className={classes.mobileImage}
+          alt="404 error illustration"
+        />
         <div>
           <Title className={classes.title}>Something is not right...</Title>
           <Text color="dimmed" size="lg">
@@ -75,7 +79,7 @@ const ErrorPage = () => {
             </Button>
           </Link>
         </div>
-        <Image src="/images/404.svg" className={classes.desktopImage} />
+        <Image src="/images/404.svg" className={classes.desktopImage} alt="404 error image"/>
       </SimpleGrid>
     </Container>
   );

@@ -30,13 +30,13 @@ const User = () => {
       <Paper p="lg" my="lg">
         <Flex justify={"center"}>
           <Group>
-            <Avatar size={150} src={user?.profileImageUrl} radius={150} />
+            <Avatar size={150} src={user?.profileImageUrl} radius={150} alt={`Profile image of ${user?.fullName}`} />
             <Text size={30} ml={50} mr={-10} weight={"bold"}>
               {user?.fullName}
             </Text>
             <>
               {user?.unsafeMetadata!["verified"] && (
-                <IconDiscountCheckFilled size={30} />
+                <IconDiscountCheckFilled size={30} aria-label="Verified User" />
               )}
             </>
           </Group>
@@ -46,7 +46,7 @@ const User = () => {
         <Text weight={"bold"} size={"xl"} align="center" mb={20}>
           Statistics & Information
         </Text>
-        <Tabs defaultValue="Statistics">
+        <Tabs defaultValue="Statistics" aria-label="User Profile Tabs">
           <Tabs.List position="center" grow={true}>
             <Tabs.Tab value="Statistics" icon={<IconChartBar size="1.3rem" />}>
               <Text weight={"bold"} size={"md"} align="center">

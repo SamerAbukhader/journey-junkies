@@ -65,125 +65,125 @@ export const EditPostPage = () => {
   });
 
   return (
-    <Container>
-      <Title className={classes.title} mb="lg">
-        <Text component="span" inherit className={classes.highlight}>
-          Edit{" "}
-        </Text>
-        {post.title}
-      </Title>
-      <Form method="post" action="/write">
-        <TextInput
-          placeholder="your amazing blog title"
-          label="Title"
-          name="title"
-          withAsterisk
-          required
-          value={post.title}
-          mb={rem(16)}
-        />
-        <TextInput
-          placeholder="add a short description"
-          label="Description"
-          name="description"
-          withAsterisk
-          required
-          value={post.description}
-          mb={rem(16)}
-        />
-        <TextInput
-          placeholder="add a post tag"
-          label="Tag"
-          name="tag"
-          withAsterisk
-          required
-          value={post.tag}
-          mb={rem(16)}
-        />
-        <Select
-          label="location"
-          placeholder="Post location"
-          data={locations}
-          mb={rem(16)}
-          required
-          value={post.location}
-          name="location"
-        />
-        <FileInput
-          label="Banner Image"
-          placeholder="Select image"
-          withAsterisk
-          icon={<IconUpload size={rem(14)} />}
-          mb={rem(16)}
-          required
-          //   onChange={async (payload: File | null) => {
-          //     if (payload !== null) {
-          //       setImage(await convertToBase64(payload));
-          //     }
-          //   }}
-          //   value={convertFromBase64(post.image, `${post.title} image`)}
-          clearable
-          accept="image/*"
-        />
-        {/* {image && <img src={image} alt="banner" width="100%" />} */}
-        <Input
-          readOnly
-          value={content}
-          name="content"
-          display="none"
-          required
-        />
-        <Input readOnly value={image} name="image" display="none" required />
-        <Input
-          readOnly
-          value={String(userId)}
-          name="author"
-          display="none"
-          required
-        />
-        <Input.Label>Content</Input.Label>
-        <RichTextEditor editor={editor}>
-          <RichTextEditor.Toolbar sticky stickyOffset={60}>
-            <RichTextEditor.ControlsGroup>
-              <RichTextEditor.Bold />
-              <RichTextEditor.Italic />
-              <RichTextEditor.Underline />
-              <RichTextEditor.Strikethrough />
-              <RichTextEditor.ClearFormatting />
-              <RichTextEditor.Highlight />
-              <RichTextEditor.Code />
-            </RichTextEditor.ControlsGroup>
-            <RichTextEditor.ControlsGroup>
-              <RichTextEditor.H1 />
-              <RichTextEditor.H2 />
-              <RichTextEditor.H3 />
-              <RichTextEditor.H4 />
-            </RichTextEditor.ControlsGroup>
-            <RichTextEditor.ControlsGroup>
-              <RichTextEditor.Blockquote />
-              <RichTextEditor.Hr />
-              <RichTextEditor.BulletList />
-              <RichTextEditor.OrderedList />
-              <RichTextEditor.Subscript />
-              <RichTextEditor.Superscript />
-            </RichTextEditor.ControlsGroup>
-            <RichTextEditor.ControlsGroup>
-              <RichTextEditor.Link />
-              <RichTextEditor.Unlink />
-            </RichTextEditor.ControlsGroup>
-            <RichTextEditor.ControlsGroup>
-              <RichTextEditor.AlignLeft />
-              <RichTextEditor.AlignCenter />
-              <RichTextEditor.AlignJustify />
-              <RichTextEditor.AlignRight />
-            </RichTextEditor.ControlsGroup>
-          </RichTextEditor.Toolbar>
-          <RichTextEditor.Content />
-        </RichTextEditor>
-        <Button type="submit" fullWidth mt="lg">
-          Save
-        </Button>
-      </Form>
-    </Container>
+      <Container>
+        <Title className={classes.title} mb="lg" id="edit-post-title">
+          <Text component="span" inherit className={classes.highlight}>
+            Edit{" "}
+          </Text>
+          {post.title}
+        </Title>
+        <Form method="post" action="/write" aria-labelledby="edit-post-title">
+          <TextInput
+              placeholder="your amazing blog title"
+              label="Title"
+              name="title"
+              withAsterisk
+              required
+              value={post.title}
+              mb={rem(16)}
+              aria-label="Enter your blog title"
+          />
+          <TextInput
+              placeholder="add a short description"
+              label="Description"
+              name="description"
+              withAsterisk
+              required
+              value={post.description}
+              mb={rem(16)}
+              aria-label="Enter a short description"
+          />
+          <TextInput
+              placeholder="add a post tag"
+              label="Tag"
+              name="tag"
+              withAsterisk
+              required
+              value={post.tag}
+              mb={rem(16)}
+              aria-label="Add a post tag"
+          />
+          <Select
+              label="Location"
+              placeholder="Post location"
+              data={locations}
+              mb={rem(16)}
+              required
+              value={post.location}
+              name="location"
+              aria-label="Select post location"
+          />
+          <FileInput
+              label="Banner Image"
+              placeholder="Select image"
+              withAsterisk
+              icon={<IconUpload size={rem(14)} />}
+              mb={rem(16)}
+              required
+              aria-label="Upload banner image"
+              clearable
+              accept="image/*"
+          />
+          <Input
+              readOnly
+              value={content}
+              name="content"
+              display="none"
+              required
+              aria-hidden="true"
+          />
+          <Input readOnly value={image} name="image" display="none" required aria-hidden="true" />
+          <Input
+              readOnly
+              value={String(userId)}
+              name="author"
+              display="none"
+              required
+              aria-hidden="true"
+          />
+          <Input.Label htmlFor="rich-text-editor">Content</Input.Label>
+          <RichTextEditor editor={editor} id="rich-text-editor" aria-label="Edit post content">
+            <RichTextEditor.Toolbar sticky stickyOffset={60}>
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.Bold />
+                <RichTextEditor.Italic />
+                <RichTextEditor.Underline />
+                <RichTextEditor.Strikethrough />
+                <RichTextEditor.ClearFormatting />
+                <RichTextEditor.Highlight />
+                <RichTextEditor.Code />
+              </RichTextEditor.ControlsGroup>
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.H1 />
+                <RichTextEditor.H2 />
+                <RichTextEditor.H3 />
+                <RichTextEditor.H4 />
+              </RichTextEditor.ControlsGroup>
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.Blockquote />
+                <RichTextEditor.Hr />
+                <RichTextEditor.BulletList />
+                <RichTextEditor.OrderedList />
+                <RichTextEditor.Subscript />
+                <RichTextEditor.Superscript />
+              </RichTextEditor.ControlsGroup>
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.Link />
+                <RichTextEditor.Unlink />
+              </RichTextEditor.ControlsGroup>
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.AlignLeft />
+                <RichTextEditor.AlignCenter />
+                <RichTextEditor.AlignJustify />
+                <RichTextEditor.AlignRight />
+              </RichTextEditor.ControlsGroup>
+            </RichTextEditor.Toolbar>
+            <RichTextEditor.Content />
+          </RichTextEditor>
+          <Button type="submit" fullWidth mt="lg">
+            Save
+          </Button>
+        </Form>
+      </Container>
   );
 };
