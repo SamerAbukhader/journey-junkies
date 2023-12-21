@@ -68,7 +68,7 @@ const Post = () => {
                 width={160}
               >
                 <Menu.Target>
-                  <IconSettings size={24} cursor="pointer" />
+                  <IconSettings size={24} cursor="pointer" aria-label="Post settings" />
                 </Menu.Target>
                 <Menu.Dropdown>
                   <Menu.Item
@@ -149,6 +149,7 @@ const Post = () => {
             }}
             // hide the rating if the user is the author of the post
             display={user?.id === post.author ? "none" : "flex"}
+            aria-label="Post rating"
           />
         </Flex>
         <Paper p="lg" my="lg">

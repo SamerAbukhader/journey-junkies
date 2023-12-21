@@ -97,6 +97,7 @@ const HomePage = () => {
                 type="search"
                 name="title"
                 id="title"
+                aria-label="Search for blogs"
                 defaultValue={formValues.title || ""}
                 classNames={{ input: classes.input }}
               />
@@ -161,6 +162,7 @@ const HomePage = () => {
         </Flex>
       </Container>
       <LoadingOverlay
+        aria-label="Loading"
         visible={Boolean(searching) || Boolean(navigation.location)}
       />
       <Home posts={posts || []} />

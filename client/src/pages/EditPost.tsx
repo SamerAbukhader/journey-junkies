@@ -86,6 +86,7 @@ const EditPost = () => {
           value={title}
           onChange={(event) => setTitle(event.currentTarget.value)}
           mb={rem(16)}
+          aria-label="Enter your blog title"
         />
         <TextInput
           placeholder="add a short description"
@@ -96,6 +97,7 @@ const EditPost = () => {
           value={description}
           onChange={(event) => setDescription(event.currentTarget.value)}
           mb={rem(16)}
+          aria-label="Enter a short description"
         />
         <TextInput
           placeholder="add a post tag"
@@ -106,6 +108,7 @@ const EditPost = () => {
           value={tag}
           onChange={(event) => setTag(event.currentTarget.value)}
           mb={rem(16)}
+          aria-label="Add a post tag"
         />
         <Select
           label="location"
@@ -116,6 +119,7 @@ const EditPost = () => {
           value={location}
           onChange={(event: string) => setLocation(event)}
           name="location"
+          aria-label="Select post location"
         />
         <FileInput
           label="Banner Image"
@@ -124,6 +128,7 @@ const EditPost = () => {
           icon={<IconUpload size={rem(14)} />}
           mb={rem(16)}
           required
+          aria-label="Upload banner image"
           onChange={async (payload: File | null) => {
             if (payload !== null) {
               setImage(await convertToBase64(payload));
@@ -140,6 +145,7 @@ const EditPost = () => {
           name="content"
           display="none"
           required
+          aria-hidden="true"
         />
         <Input readOnly value={image} name="image" display="none" required />
         <Input
@@ -148,6 +154,7 @@ const EditPost = () => {
           name="author"
           display="none"
           required
+          aria-hidden="true"
         />
         <Input.Label>Content</Input.Label>
         <RichTextEditor editor={editor}>
