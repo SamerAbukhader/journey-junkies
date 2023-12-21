@@ -25,15 +25,15 @@ export interface Tag {
   title: string;
 }
 
-// export interface User {
-//   avatar: string;
-//   name: string;
-//   email: string;
-//   isadmin: boolean;
-//   isverified: boolean;
-//   joinDate: string;
-//   activeDate: string;
-// }
+export interface User {
+  avatar: string;
+  name: string;
+  email: string;
+  isadmin: boolean;
+  isverified: boolean;
+  joinDate: string;
+  activeDate: string;
+}
 
 export type Location =
   | "All"
