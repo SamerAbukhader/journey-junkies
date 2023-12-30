@@ -214,6 +214,7 @@ const AppHeader = () => {
           onClick={toggle}
           className={classes.burger}
           size="sm"
+          aria-label="Menu"
         />
 
         <Transition transition="pop-top-right" duration={300} mounted={opened}>

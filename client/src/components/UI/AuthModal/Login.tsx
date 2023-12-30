@@ -21,6 +21,7 @@ const Login = ({ dispatch }: { dispatch: React.Dispatch<ActionTypes> }) => {
         <Anchor
           size="sm"
           component="button"
+          aria-label="Create account"
           onClick={() => dispatch(ActionTypes.SET_REGISTER)}
         >
           Create account
@@ -35,6 +36,7 @@ const Login = ({ dispatch }: { dispatch: React.Dispatch<ActionTypes> }) => {
             name="email"
             type="email"
             radius="md"
+            aria-required="true"
           />
           <PasswordInput
             label="Password"
@@ -43,6 +45,7 @@ const Login = ({ dispatch }: { dispatch: React.Dispatch<ActionTypes> }) => {
             mt="md"
             radius="md"
             name="password"
+            aria-required="true"
           />
           <Group position="apart" mt="lg">
             <Checkbox label="Remember me" />
@@ -51,6 +54,7 @@ const Login = ({ dispatch }: { dispatch: React.Dispatch<ActionTypes> }) => {
               size="sm"
               color="dimmed"
               onClick={() => dispatch(ActionTypes.SET_RESET_PASSWORD)}
+              aria-label="Forgot password?"
             >
               Forgot password?
             </Anchor>

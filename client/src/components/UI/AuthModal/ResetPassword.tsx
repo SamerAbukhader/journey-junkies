@@ -52,6 +52,7 @@ const ForgotPassword = ({
             name="email"
             type="email"
             radius="md"
+            aria-required="true"
           />
           <Group position="apart" mt="lg" className={classes.controls}>
             <Anchor
@@ -65,7 +66,7 @@ const ForgotPassword = ({
                 <Box ml={5}>Back to the login page</Box>
               </Center>
             </Anchor>
-            <Button className={classes.control} type="submit">
+            <Button className={classes.control} aria-label="Back to the login page" type="submit">
               Reset password
             </Button>
           </Group>
