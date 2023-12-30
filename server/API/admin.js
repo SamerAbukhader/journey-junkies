@@ -18,62 +18,6 @@ Admin.get("/", async (_req, res) => {
   }
 });
 
-// ======== GET USER BY ID ======== //
-
-Admin.post("/:id", async (req, res) => {
-  const { id } = req.body;
-  try {
-    const result = await pool.query('SELECT * FROM "User" WHERE id=$1', [id]);
-    if (result.rowCount === 0) {
-      res.status(404).send("User not found");
-    } else {
-      res.json(result.rows[0]);
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
-  }
-});
-
-// ========= UPDATE USER INFO ========= //
-Admin.put("/:id", async (req, res) => {
-  const {
-    id,
-    firstname,
-    lastname,
-    nationality,
-    activedate,
-    joindate,
-    birthdate,
-    image,
-    isadmin,
-    viewcount,
-    verified,
-  } = req.body;
-  try {
-    const result = await pool.query(
-      'UPDATE "User" SET firstname=$2, lastname=$3, nationality=$4, activedate=$5, joindate=$6, birthdate=$7, image=$8, isadmin=$9, viewcount=$10, verified=$11 WHERE id=$1 RETURNING *',
-      [
-        id,
-        firstname,
-        lastname,
-        nationality,
-        activedate,
-        joindate,
-        birthdate,
-        image,
-        isadmin,
-        viewcount,
-        verified,
-      ]
-    );
-    res.json(result.rows[0]);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
-  }
-});
-
 // ========= DELETE USER ========= //
 Admin.delete("/:id", async (req, res) => {
   const { id } = req.body;
