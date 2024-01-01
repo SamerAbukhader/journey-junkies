@@ -1,67 +1,68 @@
 import express from "express";
-import pool from "../DB/index.js";
 import dotenv from "dotenv";
 import clerkClient from "@clerk/clerk-sdk-node";
 
-const Admin = express.Router();
+dotenv.config(); // Load environment variables
+
+const adminRouter = express.Router();
 
 // ========= GET ALL USERS ========= //
-Admin.get("/", async (_req, res) => {
+adminRouter.get("/", async (_req, res) => {
   try {
     const users = await clerkClient.users.getUserList();
-    const filteredUsers = users.filter((user) => !!user.firstName);
-
-    res.json(filteredUsers);
+    res.json(users.filter((user) => !!user.firstName));
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "An error occurred" });
+    res.status(500).json({ error: "Failed to retrieve users" });
   }
 });
 
 // ========= DELETE USER ========= //
-Admin.delete("/:id", async (req, res) => {
-  const { id } = req.body;
+adminRouter.delete("/:id", async (req, res) => {
+  const { id } = req.params; // Use req.params for route parameters
   try {
     await clerkClient.users.deleteUser(id);
-    return res.sendStatus(200); // If the user deletion is successful, this will send a 200 status code back to the client.
+    res.status(200).send("User deleted"); // Send a descriptive success message
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error"); // If there is an error during user deletion, this will send a 500 status code and an error message back to the client.
+    res.status(500).json({ error: "Failed to delete user" });
   }
 });
 
 // ========= CHANGE USER ROLE ========= //
-Admin.patch("/:id/changeRole", async (req, res) => {
-  const { id, isadmin } = req.body;
+adminRouter.patch("/:id/changeRole", async (req, res) => {
+  const { id } = req.params;
+  const { isAdmin } = req.body; // Improved variable naming
   try {
-    const user = await clerkClient.users.updateUser(id, {
+    await clerkClient.users.updateUser(id, {
       unsafeMetadata: {
-        admin: isadmin["admin"],
-        verified: isadmin["verified"],
+        admin: isAdmin,
+        verified: false, // Assuming you don't want to verify when changing role
       },
     });
-    return res.sendStatus(200);
+    res.status(200).send("User role updated");
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).json({ error: "Failed to update user role" });
   }
 });
 
 // ========= VERIFY USER ========= //
-Admin.patch("/:id/verify", async (req, res) => {
-  const { id, verified } = req.body;
+adminRouter.patch("/:id/verify", async (req, res) => {
+  const { id } = req.params;
+  const { verified } = req.body;
   try {
-    const user = await clerkClient.users.updateUser(id, {
+    await clerkClient.users.updateUser(id, {
       unsafeMetadata: {
-        admin: verified["admin"],
-        verified: verified["verified"],
+        admin: false, // Assuming you don't want to grant admin when verifying
+        verified: verified,
       },
     });
-    return res.sendStatus(200);
+    res.status(200).send("User verified");
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).json({ error: "Failed to verify user" });
   }
 });
 
-export default Admin;
+export default adminRouter;

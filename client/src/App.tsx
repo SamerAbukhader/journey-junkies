@@ -1,15 +1,18 @@
-import { Dashboard, Error, Home, Post, User, Write, EditPost } from "./pages";
 import {
-  createBrowserRouter,
-  RouterProvider,
-  createRoutesFromElements,
-  Route,
-} from "react-router-dom";
+  Dashboard,
+  Error,
+  Home,
+  Post,
+  User,
+  Write,
+  EditPost,
+} from "./pages";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {
+  dashboardAction,
   editPostAction,
   newPostAction,
   postPageActions,
-  dashboardAction,
 } from "./actions";
 import {
   dashboardLoader,
@@ -24,44 +27,45 @@ import { SignedIn, useUser } from "@clerk/clerk-react";
 function App() {
   const { user } = useUser();
 
-  const newRouter = createBrowserRouter(
-    createRoutesFromElements(
-      <Route path="/" element={<Container />} errorElement={<Error />}>
-        <Route index element={<Home />} loader={postsLoader} />
-        <Route
-          path=":id"
-          element={
-            <SignedIn>
-              <Post />
-            </SignedIn>
-          }
-          loader={postPageLoader}
-          id="post"
-          action={postPageActions}
-        />
-        <Route
-          path=":id/edit"
-          element={<EditPost />}
-          loader={editPostLoader}
-          action={editPostAction}
-        />
-        <Route path="write" element={<Write />} action={newPostAction} />
-        <Route
-          path="dashboard"
-          element={<Dashboard />}
-          loader={dashboardLoader}
-          action={dashboardAction}
-        />
-        <Route
-          path="profile"
-          element={<User />}
-          loader={profilePageLoader(user?.id ?? "")}
-        />
-      </Route>
-    )
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Container />}>
+          <Route index element={<Home />} loader={postsLoader} />
+          <Route
+            path=":id"
+            element={
+              <SignedIn>
+                <Post />
+              </SignedIn>
+            }
+            loader={postPageLoader}
+            id="post"
+            action={postPageActions}
+          />
+          <Route
+            path=":id/edit"
+            element={<EditPost />}
+            loader={editPostLoader}
+            action={editPostAction}
+          />
+          <Route path="write" element={<Write />} action={newPostAction} />
+          <Route
+            path="dashboard"
+            element={<Dashboard />}
+            loader={dashboardLoader}
+            action={dashboardAction}
+          />
+          <Route
+            path="profile"
+            element={<User />}
+            loader={profilePageLoader(user?.id ?? "")}
+          />
+          <Route path="*" element={<Error />} /> // Catch-all error route
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
-
-  return <RouterProvider router={newRouter} />;
 }
 
 export default App;
