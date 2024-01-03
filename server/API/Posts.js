@@ -6,7 +6,7 @@ const posts = express.Router();
 posts.get("/", async (req, res) => {
   let query = `SELECT * FROM posts`;
   if (req.query.title) {
-    query += ` WHERE title LIKE '${req.query.title}'`;
+    query += ` WHERE title LIKE '%${req.query.title}%'`;
   }
 
   if (req.query.tag) {
