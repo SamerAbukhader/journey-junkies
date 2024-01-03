@@ -8,6 +8,7 @@ posts.get("/", async (req, res) => {
   if (req.query.title) {
     query += ` WHERE title LIKE '${req.query.title}'`;
   }
+
   if (req.query.tag) {
     query += ` WHERE tag LIKE '${req.query.tag}'`;
   }
@@ -18,7 +19,7 @@ posts.get("/", async (req, res) => {
   try {
     pool.getConnection((err, connection) => {
       if (err) throw err;
-      connection.query(query, queryParams, (err, rows) => {
+      connection.query(query, [], (err, rows) => {
         connection.release(); // return the connection to pool
         if (!err) {
           res.send(rows);
