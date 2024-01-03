@@ -111,31 +111,12 @@ const HomePage = () => {
             {opened && (
               <Paper className={classes.advancedFilter}>
                 <TextInput
-                  placeholder="Search for author"
-                  size="sm"
-                  label="Author"
-                  name="author"
-                  defaultValue={formValues.author || ""}
-                  mb={rem(12)}
-                />
-                <TextInput
                   placeholder="Search for blog tag"
                   size="sm"
                   label="Tag"
                   name="tag"
                   defaultValue={formValues.tag || ""}
                   mb={rem(12)}
-                />
-                <NumberInput
-                  placeholder="Filter by rating"
-                  size="sm"
-                  label="Rating"
-                  mb={rem(24)}
-                  max={5}
-                  precision={1}
-                  name="rating"
-                  defaultValue={formValues.rating || 0}
-                  min={0}
                 />
                 <Select
                   label="location"

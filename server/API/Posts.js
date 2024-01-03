@@ -4,23 +4,15 @@ const posts = express.Router();
 
 // ========= Get All posts (this is the search functionality) ========= //
 posts.get("/", async (req, res) => {
-  const queryParams = [];
   let query = `SELECT * FROM posts`;
   if (req.query.title) {
-    queryParams.push(`%${req.query.title}%`);
-    query += ` WHERE title LIKE $${queryParams.length}`;
-  }
-  if (req.query.author) {
-    queryParams.push(`%${req.query.author}%`);
-    query += ` WHERE author LIKE $${queryParams.length}`;
+    query += ` WHERE title LIKE '${req.query.title}'`;
   }
   if (req.query.tag) {
-    queryParams.push(`%${req.query.tag}%`);
-    query += ` WHERE tag LIKE $${queryParams.length}`;
+    query += ` WHERE tag LIKE '${req.query.tag}'`;
   }
   if (req.query.location) {
-    queryParams.push(`%${req.query.location}%`);
-    query += ` WHERE location LIKE $${queryParams.length}`;
+    query += ` WHERE location = '${req.query.location}'`;
   }
 
   try {
