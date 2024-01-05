@@ -26,6 +26,7 @@ import ErrorPage from "./ErrorPage";
 import { useUser } from "@clerk/clerk-react";
 import { useState } from "react";
 
+
 const Dashboard = () => {
   const users = useLoaderData() as LoaderData<typeof dashboardLoader>;
   const theme = useMantineTheme();
@@ -38,7 +39,7 @@ const Dashboard = () => {
           <Avatar size={30} src={user.imageUrl} radius={30} />
           <Text fz="sm" fw={500}>
             <Flex align="center" gap={4}>
-              {user.firstName + " " + user.lastName}{" "}
+              {user.firstName + " " + user.lastName+ "yo yo yo"}{" "}
               {user.unsafeMetadata!["verified"] && (
                 <IconDiscountCheckFilled
                   size={20}
@@ -47,6 +48,7 @@ const Dashboard = () => {
                 />
               )}
             </Flex>
+            <Text fz="sm" c="dimmed">{user.email}</Text> 
           </Text>
         </Group>
       </td>
@@ -130,7 +132,9 @@ const Dashboard = () => {
         </Form>
       </td>
     </tr>
+    
   ));
+  
 
   return user?.unsafeMetadata["admin"] ? (
     <Container>

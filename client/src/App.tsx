@@ -20,12 +20,15 @@ import {
 } from "./loaders";
 import { Container } from "./components/layout";
 import { SignedIn, useUser } from "@clerk/clerk-react";
+import { Footer } from "./components/UI/Footer";
 
 function App() {
   const { user } = useUser();
 
   const newRouter = createBrowserRouter(
+      
     createRoutesFromElements(
+     
       <Route path="/" element={<Container />} errorElement={<Error />}>
         <Route index element={<Home />} loader={postsLoader} />
         <Route
@@ -58,6 +61,7 @@ function App() {
           loader={profilePageLoader(user?.id ?? "")}
         />
       </Route>
+      
     )
   );
 
