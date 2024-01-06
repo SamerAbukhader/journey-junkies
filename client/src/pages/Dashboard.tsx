@@ -39,7 +39,7 @@ const Dashboard = () => {
           <Avatar size={30} src={user.imageUrl} radius={30} />
           <Text fz="sm" fw={500}>
             <Flex align="center" gap={4}>
-              {user.firstName + " " + user.lastName+ "yo yo yo"}{" "}
+              {user.firstName + " " + user.lastName}{" "}
               {user.unsafeMetadata!["verified"] && (
                 <IconDiscountCheckFilled
                   size={20}
@@ -48,7 +48,6 @@ const Dashboard = () => {
                 />
               )}
             </Flex>
-            <Text fz="sm" c="dimmed">{user.email}</Text> 
           </Text>
         </Group>
       </td>

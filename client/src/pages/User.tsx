@@ -27,12 +27,13 @@ const User = () => {
   const ratingsChart = filterRates(data?.ratings);
   return (
     <Container size={1200}>
-      <Paper p="lg" my="lg">
+      <Paper p="lg" my="lg" style={{borderRadius:"10px",height:"14rem",paddingTop:"2rem"}}>
         <Flex justify={"center"}>
           <Group>
             <Avatar size={150} src={user?.profileImageUrl} radius={150} alt={`Profile image of ${user?.fullName}`} />
             <Text size={30} ml={50} mr={-10} weight={"bold"}>
-              {user?.fullName}
+              {"Name: "+user?.fullName}<br/>
+              {"Email: "+String(user?.emailAddresses)}
             </Text>
             <>
               {user?.unsafeMetadata!["verified"] && (
@@ -42,7 +43,7 @@ const User = () => {
           </Group>
         </Flex>
       </Paper>
-      <Paper mt={10} p="lg" my="lg">
+      <Paper mt={10} p="lg" my="lg" style={{borderRadius:"10px"}}>
         <Text weight={"bold"} size={"xl"} align="center" mb={20}>
           Statistics & Information
         </Text>
