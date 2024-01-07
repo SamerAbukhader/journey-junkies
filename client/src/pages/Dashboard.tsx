@@ -27,18 +27,24 @@ import { useUser } from "@clerk/clerk-react";
 import { useState } from "react";
 
 const Dashboard = () => {
+  // Load user data using the dashboard loader
   const users = useLoaderData() as LoaderData<typeof dashboardLoader>;
   const theme = useMantineTheme();
   const { user } = useUser();
+  // State to manage the selected form value for user actions
   const [formValue, setFormValue] = useState<"verify" | "delete" | "role">();
+
+  // Generate table rows based on user data
   const rows = users.map((user: any) => (
     <tr key={user.id}>
       <td>
+        {/* Display user avatar and name */}
         <Group spacing="sm">
           <Avatar size={30} src={user.imageUrl} radius={30} />
           <Text fz="sm" fw={500}>
             <Flex align="center" gap={4}>
               {user.firstName + " " + user.lastName}{" "}
+              {/* Display verification icon if user is verified */}
               {user.unsafeMetadata!["verified"] && (
                 <IconDiscountCheckFilled
                   size={20}
@@ -51,6 +57,7 @@ const Dashboard = () => {
         </Group>
       </td>
       <td>
+        {/* Display user join date */}
         <Group spacing="sm">
           <Text fz="sm" c="dimmed">
             {formatDate(user.createdAt)}
@@ -58,6 +65,7 @@ const Dashboard = () => {
         </Group>
       </td>
       <td>
+        {/* Display user last active date */}
         <Group spacing="sm">
           <Text fz="sm" c="dimmed">
             {timeAgo(user.lastSignInAt)}
@@ -65,6 +73,7 @@ const Dashboard = () => {
         </Group>
       </td>
       <td>
+        {/* Display whether the user is an admin */}
         <Group spacing="sm">
           <Text fz="sm" fw={500}>
             {user.unsafeMetadata["admin"] ? (
@@ -76,7 +85,9 @@ const Dashboard = () => {
         </Group>
       </td>
       <td>
+        {/* Form for user actions */}
         <Form method="post" style={{ padding: "20px" }}>
+          {/* Dropdown menu for user actions */}
           <Menu
             trigger="hover"
             openDelay={100}
@@ -85,9 +96,11 @@ const Dashboard = () => {
             width={160}
           >
             <Menu.Target>
+              {/* Settings icon to trigger the menu */}
               <IconSettings size={24} cursor="pointer" />
             </Menu.Target>
             <Menu.Dropdown>
+              {/* Hidden input to pass data to the form */}
               <TextInput
                 readOnly
                 display="none"
@@ -99,9 +112,8 @@ const Dashboard = () => {
                     metaData: user.unsafeMetadata,
                   }) ?? ""
                 }
-                // user id
-                // user unsafe meta data
               />
+              {/* Menu items for user actions */}
               <Menu.Item
                 type="submit"
                 icon={<IconCircleCheck size={14} />}
@@ -109,7 +121,6 @@ const Dashboard = () => {
               >
                 Toggle Verify
               </Menu.Item>
-
               <Menu.Item
                 onClick={() => setFormValue("role")}
                 type="submit"
@@ -132,9 +143,12 @@ const Dashboard = () => {
     </tr>
   ));
 
+  // Render the Dashboard content based on user role
   return user?.unsafeMetadata["admin"] ? (
     <Container>
+      {/* Scrollable area for the user table */}
       <ScrollArea>
+        {/* User table with columns: Name, Join Date, Active Date, Is Admin, Actions */}
         <Table sx={{ minWidth: 800 }} verticalSpacing="sm">
           <thead>
             <tr>
@@ -150,6 +164,7 @@ const Dashboard = () => {
       </ScrollArea>
     </Container>
   ) : (
+    // Display an error page for non-admin users
     <ErrorPage />
   );
 };

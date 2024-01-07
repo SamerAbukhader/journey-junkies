@@ -54,12 +54,15 @@ const Post = () => {
     lat: JSON.parse(post.map_coords).lat,
     lng: JSON.parse(post.map_coords).lng,
   });
+
   return (
     <Center my="xl">
       <Container>
+        {/* Edit and delete options for the author */}
         {user?.id === post.author && (
           <Group position="right">
             <Form method="post">
+              {/* Menu for post settings */}
               <Menu
                 trigger="hover"
                 openDelay={100}
@@ -70,6 +73,7 @@ const Post = () => {
                 <Menu.Target>
                   <IconSettings size={24} cursor="pointer" aria-label="Post settings" />
                 </Menu.Target>
+                {/* Edit and delete options in the dropdown */}
                 <Menu.Dropdown>
                   <Menu.Item
                     icon={<IconEdit size={14} />}
@@ -91,7 +95,10 @@ const Post = () => {
             </Form>
           </Group>
         )}
+
+        {/* Post details and content */}
         <Flex justify="center" gap="md" direction="column" mb="md">
+          {/* Location */}
           <Center>
             <Text
               fw={500}
@@ -101,12 +108,15 @@ const Post = () => {
               {post?.location || "Europe"}
             </Text>
           </Center>
+          {/* Post title */}
           <Title className={classes.title}>{post.title}</Title>
+          {/* Post creation time */}
           <Center>
             <Text fz={"sm"} color="dimmed">
               {timeAgo(post.created_at)}
             </Text>
           </Center>
+          {/* Post image */}
           <Image
             fit="fill"
             alt={post.title}
@@ -115,7 +125,8 @@ const Post = () => {
             width="100%"
             mih="100%"
           />
-          <LoadScript googleMapsApiKey="AIzaSyB_dpImNu2XvLmYc91JsHg_Ll5bUlvqJpQ">
+          {/* Google Map */}
+          <LoadScript googleMapsApiKey="Your_API_Key">
             <GoogleMap
               mapContainerStyle={{ width: "100%", height: "400px" }}
               zoom={10}
@@ -125,9 +136,14 @@ const Post = () => {
             </GoogleMap>
           </LoadScript>
         </Flex>
+
+        {/* Parse and display HTML content */}
         {HTMLReactParser(post.content)}
+
+        {/* User rating section */}
         <Flex justify="center" mt={40}>
           <TextInput display={"none"} name="user" value={user?.id} readOnly />
+          {/* Display rating only if the user is not the author */}
           <Rating
             fractions={2}
             defaultValue={
@@ -147,17 +163,20 @@ const Post = () => {
                 method: "post",
               });
             }}
-            // hide the rating if the user is the author of the post
             display={user?.id === post.author ? "none" : "flex"}
             aria-label="Post rating"
           />
         </Flex>
+
+        {/* Comments section */}
         <Paper p="lg" my="lg">
           <Flex justify="center" gap="sm" direction="column">
+            {/* Comments title */}
             <Text size="lg" fw={600} mb="lg">
               Comments
             </Text>
             <Form method="post">
+              {/* Input fields for submitting a comment */}
               <TextInput
                 display={"none"}
                 name="author"
@@ -192,6 +211,7 @@ const Post = () => {
                 }
               />
             </Form>
+            {/* Display comments */}
             {comments.map((comment: any, index: any) => (
               <div key={comment.id}>
                 <Comment
@@ -203,6 +223,7 @@ const Post = () => {
                   }}
                   body={comment.comment}
                 />
+                {/* Divider between comments */}
                 {index !== comments.length - 1 && <Divider mt={10} />}
               </div>
             ))}

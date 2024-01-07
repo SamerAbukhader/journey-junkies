@@ -21,7 +21,9 @@ import { useState } from "react";
 import { IconAdjustmentsAlt, IconSearch } from "@tabler/icons-react";
 import { locations } from "../types/data";
 
+// Create styles using Mantine's createStyles utility
 const useStyles = createStyles((theme) => ({
+  // Styles for the title component
   title: {
     fontWeight: 800,
     fontSize: rem(40),
@@ -31,23 +33,31 @@ const useStyles = createStyles((theme) => ({
     color: theme.colorScheme === "dark" ? theme.white : theme.black,
   },
 
+  // Highlighted text style
   highlight: {
     color: theme.colors[theme.primaryColor][4],
   },
 
+  // Styles for the TextInput component
   input: {
     borderRadius: 0,
     borderTopLeftRadius: theme.spacing.md,
     borderBottomLeftRadius: theme.spacing.md,
   },
+
+  // Styles for the filter button
   filter: {
     borderRadius: 0,
     borderTopRightRadius: theme.spacing.md,
     borderBottomRightRadius: theme.spacing.md,
   },
+
+  // Styles for the entire form
   form: {
     width: "100%",
   },
+
+  // Styles for the advanced filter section
   advancedFilter: {
     display: "grid",
     marginBlock: theme.spacing.md,
@@ -58,27 +68,31 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const HomePage = () => {
-  const { posts, formValues } = useLoaderData() as LoaderData<
-    typeof postsLoader
-  >;
+  // Extract data and values from the loader
+  const { posts, formValues } = useLoaderData() as LoaderData<typeof postsLoader>;
+  // State for managing the visibility of the advanced filter
   const [opened, setOpened] = useState<boolean>(false);
+  // Navigation hook from react-router-dom
   const navigation = useNavigation();
+  // Extract classes and theme from Mantine styles
   const { classes, theme } = useStyles();
 
-  const searching =
-    navigation.location &&
-    new URLSearchParams(navigation.location.search).has("title");
+  // Check if searching based on the presence of 'title' in the query params
+  const searching = navigation.location && new URLSearchParams(navigation.location.search).has("title");
 
   return (
     <div>
+      {/* Title section */}
       <Center mt={rem(48)}>
         <Title className={classes.title}>
           To Travel is to{" "}
+          {/* Highlighted text */}
           <Text component="span" inherit className={classes.highlight}>
             Live
           </Text>
         </Title>
       </Center>
+      {/* Main container */}
       <Container mt="sm">
         <Flex
           direction="column"
@@ -87,8 +101,10 @@ const HomePage = () => {
           justify="center"
           mb={theme.spacing.lg}
         >
+          {/* Search form */}
           <Form id="search" role="search" className={classes.form}>
             <Flex w="100%" align="center" justify="center">
+              {/* Search input */}
               <TextInput
                 placeholder="Search for blogs"
                 size="sm"
@@ -101,6 +117,7 @@ const HomePage = () => {
                 defaultValue={formValues.title || ""}
                 classNames={{ input: classes.input }}
               />
+              {/* Filter button */}
               <Button className={classes.filter}>
                 <IconAdjustmentsAlt
                   size={24}
@@ -108,8 +125,10 @@ const HomePage = () => {
                 />
               </Button>
             </Flex>
+            {/* Advanced filter section */}
             {opened && (
               <Paper className={classes.advancedFilter}>
+                {/* Tag input */}
                 <TextInput
                   placeholder="Search for blog tag"
                   size="sm"
@@ -118,6 +137,7 @@ const HomePage = () => {
                   defaultValue={formValues.tag || ""}
                   mb={rem(12)}
                 />
+                {/* Location dropdown */}
                 <Select
                   label="location"
                   placeholder="Post location"
@@ -126,6 +146,7 @@ const HomePage = () => {
                   name="location"
                   defaultValue={formValues.location || ""}
                 />
+                {/* Cancel and Apply buttons */}
                 <Button
                   type="submit"
                   bg="red"
@@ -142,10 +163,12 @@ const HomePage = () => {
           </Form>
         </Flex>
       </Container>
+      {/* Loading overlay */}
       <LoadingOverlay
         aria-label="Loading"
         visible={Boolean(searching) || Boolean(navigation.location)}
       />
+      {/* Render the Home component with the retrieved posts */}
       <Home posts={posts || []} />
     </div>
   );
