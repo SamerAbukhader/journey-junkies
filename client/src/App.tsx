@@ -1,25 +1,33 @@
-import { Dashboard, Error, Home, Post, User, Write, EditPost } from "./pages";
+import { Container } from "./components/layout";
+import { SignedIn, useUser } from "@clerk/clerk-react";
+import {
+  Dashboard,
+  Error,
+  Home,
+  Post,
+  User,
+  Write,
+  EditPost
+} from "./pages";
 import {
   createBrowserRouter,
-  RouterProvider,
   createRoutesFromElements,
   Route,
+  RouterProvider
 } from "react-router-dom";
 import {
+  dashboardAction,
   editPostAction,
   newPostAction,
-  postPageActions,
-  dashboardAction,
+  postPageActions
 } from "./actions";
 import {
   dashboardLoader,
   editPostLoader,
   postPageLoader,
   postsLoader,
-  profilePageLoader,
+  profilePageLoader
 } from "./loaders";
-import { Container } from "./components/layout";
-import { SignedIn, useUser } from "@clerk/clerk-react";
 
 function App() {
   const { user } = useUser();
@@ -30,11 +38,7 @@ function App() {
         <Route index element={<Home />} loader={postsLoader} />
         <Route
           path=":id"
-          element={
-            <SignedIn>
-              <Post />
-            </SignedIn>
-          }
+          element={<SignedIn><Post /></SignedIn>}
           loader={postPageLoader}
           id="post"
           action={postPageActions}
