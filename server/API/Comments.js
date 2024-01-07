@@ -1,166 +1,71 @@
 import express from "express";
 import pool from "../DB/index.js";
 
-const Comments = express.Router();
+const router = express.Router();
 
-// ========= GET ALL COMMENTS FOR A POST ========= //
-Comments.get("/:postId", async (req, res) => {
-  const postId = req.params.postId;
+// Helper function to handle database interactions
+async function handleQuery(query, params = [], res) {
   try {
-    pool.getConnection((err, connection) => {
-      if (err) throw err;
-      connection.query(
-        "SELECT * from comments WHERE post_id = ?",
-        [postId],
-        (err, rows) => {
-          connection.release(); // return the connection to pool
-          if (!err) {
-            res.send(rows);
-          } else {
-            console.log(err);
-          }
-        }
-      );
-    });
-  } catch (error) {
-    console.error(error);
+    const connection = await pool.getConnection();
+    const [result] = await connection.query(query, params);
+    connection.release();
+    res.send(result);
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "An error occurred" });
   }
+}
+
+// Get all comments for a post
+router.get("/:postId", async (req, res) => {
+  const postId = req.params.postId;
+  const query = "SELECT * FROM comments WHERE post_id = ?";
+  await handleQuery(query, [postId], res);
 });
 
-// ========= CREATE COMMENT ========= //
-Comments.post("/", async (req, res) => {
+// Create a comment
+router.post("/", async (req, res) => {
   const { post_id, user_id, comment, name } = req.body;
-
   if (!post_id || !user_id || !comment || !name) {
     return res.status(400).json({ error: "Missing required parameters" });
   }
 
-  try {
-    pool.getConnection((err, connection) => {
-      if (err) throw err;
-      connection.query(
-        "INSERT INTO comments (post_id, author, comment, author_id) VALUES (?, ?, ?, ?)",
-        [post_id, name, comment, user_id],
-        (err, result) => {
-          connection.release(); // return the connection to pool
-          if (!err) {
-            res.send(result);
-          } else {
-            console.log(err);
-          }
-        }
-      );
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "An error occurred" });
-  }
+  const query =
+    "INSERT INTO comments (post_id, author, comment, author_id) VALUES (?, ?, ?, ?)";
+  await handleQuery(query, [post_id, name, comment, user_id], res);
 });
 
-// ========= DELETE COMMENT ========= //
-Comments.delete("/:id", async (req, res) => {
+// Delete a comment
+router.delete("/:id", async (req, res) => {
   const id = req.params.id;
-  try {
-    pool.getConnection((err, connection) => {
-      if (err) throw err;
-      connection.query(
-        "DELETE FROM comments WHERE id = ?",
-        [id],
-        (err, result) => {
-          connection.release(); // return the connection to pool
-          if (!err) {
-            res.send(result);
-          } else {
-            console.log(err);
-          }
-        }
-      );
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "An error occurred" });
-  }
+  const query = "DELETE FROM comments WHERE id = ?";
+  await handleQuery(query, [id], res);
 });
 
-// ========= EDIT COMMENT ========= //
-Comments.put("/:id", async (req, res) => {
+// Edit a comment
+router.put("/:id", async (req, res) => {
   const id = req.params.id;
   const { comment } = req.body;
-
   if (!comment) {
     return res.status(400).json({ error: "Missing required parameters" });
   }
 
-  try {
-    pool.getConnection((err, connection) => {
-      if (err) throw err;
-      connection.query(
-        "UPDATE comments SET comment = ? WHERE id = ?",
-        [comment, id],
-        (err, result) => {
-          connection.release(); // return the connection to pool
-          if (!err) {
-            res.send(result);
-          } else {
-            console.log(err);
-          }
-        }
-      );
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "An error occurred" });
-  }
+  const query = "UPDATE comments SET comment = ? WHERE id = ?";
+  await handleQuery(query, [comment, id], res);
 });
 
-// ========== GET ALL COMMENTS FOR A USER ========= //
-Comments.get("/user/:userId", async (req, res) => {
+// Get all comments for a user
+router.get("/user/:userId", async (req, res) => {
   const userId = req.params.userId;
-  try {
-    pool.getConnection((err, connection) => {
-      if (err) throw err;
-      connection.query(
-        "SELECT * from comments WHERE author_id = ?",
-        [userId],
-        (err, rows) => {
-          connection.release(); // return the connection to pool
-          if (!err) {
-            res.send(rows);
-          } else {
-            console.log(err);
-          }
-        }
-      );
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "An error occurred" });
-  }
+  const query = "SELECT * FROM comments WHERE author_id = ?";
+  await handleQuery(query, [userId], res);
 });
 
-// ========== DELETE ALL COMMENTS FOR A USER ========= //
-Comments.delete("/user/:userId", async (req, res) => {
+// Delete all comments for a user
+router.delete("/user/:userId", async (req, res) => {
   const userId = req.params.userId;
-  try {
-    pool.getConnection((err, connection) => {
-      if (err) throw err;
-      connection.query(
-        "DELETE FROM comments WHERE author_id = ?",
-        [userId],
-        (err, result) => {
-          connection.release(); // return the connection to pool
-          if (!err) {
-            res.send(result);
-          } else {
-            console.log(err);
-          }
-        }
-      );
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "An error occurred" });
-  }
+  const query = "DELETE FROM comments WHERE author_id = ?";
+  await handleQuery(query, [userId], res);
 });
-export default Comments;
+
+export default router;
