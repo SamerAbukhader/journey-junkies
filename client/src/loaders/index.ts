@@ -2,6 +2,11 @@ import { LoaderFunction } from "react-router-dom";
 import { Post } from "../types";
 import axios, { AxiosResponse } from "axios";
 
+// Create an Axios instance with a custom base URL
+const apiInstance = axios.create({
+  baseURL: "https://journyjunkies.ddns.net:8081",
+});
+
 interface HomePageLoader {
   message: string;
 }
@@ -41,23 +46,27 @@ export const postsLoader = (async ({ request }): Promise<PostsPageLoader> => {
 }) satisfies LoaderFunction;
 
 export const postPageLoader = (async ({ params }): Promise<any> => {
-  const { data: posts } = await axios.get(`/api/posts/${params.id}`);
+  const { data: posts } = await apiInstance.get(`/api/posts/${params.id}`);
 
-  const { data: comments } = await axios.get(`/api/comments/${params.id}`);
+  const { data: comments } = await apiInstance.get(
+    `/api/comments/${params.id}`
+  );
 
-  const { data: ratings } = await axios.get(`/api/ratings/${params.id}`);
+  const { data: ratings } = await apiInstance.get(`/api/ratings/${params.id}`);
 
   const post = posts![0] as Post;
   return { post, comments, ratings };
 }) satisfies LoaderFunction;
 
 export const dashboardLoader = async (): Promise<any> => {
-  const { data: users }: AxiosResponse<[]> = await axios.get("/api/users");
+  const { data: users }: AxiosResponse<[]> = await apiInstance.get(
+    "/api/users"
+  );
   return users;
 };
 
 export const editPostLoader = (async ({ params }): Promise<Post> => {
-  const { data } = await axios.get(`/api/posts/${params.id}`);
+  const { data } = await apiInstance.get(`/api/posts/${params.id}`);
 
   const post = data![0] as Post;
   return post;
@@ -66,7 +75,7 @@ export const editPostLoader = (async ({ params }): Promise<Post> => {
 export const retrievePosts = async (
   filter: PostsLoaderFilter
 ): Promise<Post[]> => {
-  const { data: posts } = await axios.get("/api/posts", {
+  const { data: posts } = await apiInstance.get("/api/posts", {
     params: {
       title: filter.title,
       author: filter.author,
@@ -79,7 +88,9 @@ export const retrievePosts = async (
 
 export const profilePageLoader = (userId: string) =>
   (async () => {
-    const { data: posts } = await axios.get(`/api/posts/user/${userId}`);
-    const { data: ratings } = await axios.get(`/api/ratings/user/${userId}`);
+    const { data: posts } = await apiInstance.get(`/api/posts/user/${userId}`);
+    const { data: ratings } = await apiInstance.get(
+      `/api/ratings/user/${userId}`
+    );
     return { ratings, posts };
   }) satisfies LoaderFunction;
