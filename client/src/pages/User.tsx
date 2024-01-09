@@ -19,18 +19,24 @@ import {
 import { filterRates, formatDate, timeAgo } from "../utils";
 import { useLoaderData } from "react-router-dom";
 import { Post } from "../components/UI";
-import { Post as PostType } from "../types";
+import { LoaderData, Post as PostType } from "../types";
+import { profilePageLoader } from "../loaders";
 
 const User = () => {
   const { user } = useUser();
-  const data = useLoaderData();
-  const ratingsChart = filterRates(data?.ratings);
+  const data = useLoaderData() as any;
+  const ratingsChart = filterRates(data?.ratings || []);
   return (
     <Container size={1200}>
       <Paper p="lg" my="lg">
         <Flex justify={"center"}>
           <Group>
-            <Avatar size={150} src={user?.profileImageUrl} radius={150} alt={`Profile image of ${user?.fullName}`} />
+            <Avatar
+              size={150}
+              src={user?.profileImageUrl}
+              radius={150}
+              alt={`Profile image of ${user?.fullName}`}
+            />
             <Text size={30} ml={50} mr={-10} weight={"bold"}>
               {user?.fullName}
             </Text>

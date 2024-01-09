@@ -1,7 +1,6 @@
 import { LoaderFunction } from "react-router-dom";
 import { Post } from "../types";
 import axios, { AxiosResponse } from "axios";
-import dummyData, { fetchRandomImages } from "../data";
 interface HomePageLoader {
   message: string;
 }
