@@ -3,7 +3,7 @@ import axios from "axios";
 
 // Create an Axios instance with a custom base URL
 const apiInstance = axios.create({
-  baseURL: "http://journyjunkies.ddns.net:8081",
+  baseURL: "https://journyjunkies.ddns.net:8081",
 });
 
 export const newPostAction: NonIndexRouteObject["action"] = async ({
