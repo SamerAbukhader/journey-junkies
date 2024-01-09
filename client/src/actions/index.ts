@@ -1,6 +1,11 @@
 import { NonIndexRouteObject, redirect, useNavigate } from "react-router-dom";
 import axios from "axios";
 
+// Create an Axios instance with a custom base URL
+const apiInstance = axios.create({
+  baseURL: "http://journyjunkies.ddns.net:8081",
+});
+
 export const newPostAction: NonIndexRouteObject["action"] = async ({
   request,
 }) => {
@@ -15,7 +20,7 @@ export const newPostAction: NonIndexRouteObject["action"] = async ({
     author: data.get("author"),
     map_coords: data.get("map_coords"),
   };
-  await axios.post("/api/posts", post);
+  await apiInstance.post("/api/posts", post);
   return redirect("/");
 };
 
@@ -26,7 +31,7 @@ export const postPageActions: NonIndexRouteObject["action"] = async ({
   let formData = await request.formData();
   let intent = formData.get("intent");
   if (intent === "delete") {
-    await axios.delete(`/api/posts/${params.id}`);
+    await apiInstance.delete(`/api/posts/${params.id}`);
     return redirect("/");
   }
   if (intent === "comment") {
@@ -64,7 +69,7 @@ export const editPostAction: NonIndexRouteObject["action"] = async ({
     tag: data.get("tag"),
     author: data.get("author"),
   };
-  await axios.put(`/api/posts/${id}`, post);
+  await apiInstance.put(`/api/posts/${id}`, post);
   return redirect(`/${id}`);
 };
 
@@ -95,15 +100,15 @@ const postRating = async (
   rating: Number,
   post_author: string
 ) => {
-  const { data: ratings } = await axios.get(
+  const { data: ratings } = await apiInstance.get(
     `/api/ratings/user/${user}/${postId}`
   );
   if (ratings?.length) {
-    await axios.put(`/api/ratings/${ratings[0].id}`, {
+    await apiInstance.put(`/api/ratings/${ratings[0].id}`, {
       rating: rating,
     });
   } else {
-    await axios.post("/api/ratings", {
+    await apiInstance.post("/api/ratings", {
       post_id: postId,
       user: user,
       post_author: post_author,
@@ -118,7 +123,7 @@ const postComment = async (
   user: any,
   author_id: any
 ) => {
-  await axios.post("/api/comments", {
+  await apiInstance.post("/api/comments", {
     post_id: postId,
     comment: comment,
     name: user,
@@ -127,23 +132,23 @@ const postComment = async (
 };
 
 const deleteUser = async (id: string) => {
-  const response = await axios.delete(`/api/users/${id}`, {
+  const response = await apiInstance.delete(`/api/users/${id}`, {
     data: {
       id: id,
     },
   });
   // if user is deleted, delete all posts and comments and ratings by that user
   if (response.status === 200) {
-    await axios.delete(`/api/posts/user/${id}`);
-    await axios.delete(`/api/comments/user/${id}`);
-    await axios.delete(`/api/ratings/user/${id}`);
+    await apiInstance.delete(`/api/posts/user/${id}`);
+    await apiInstance.delete(`/api/comments/user/${id}`);
+    await apiInstance.delete(`/api/ratings/user/${id}`);
   }
 };
 
 const verifyUser = async (id: string, v: any) => {
   let newMta = v;
   newMta["verified"] = !v["verified"];
-  const response: any = await axios.patch(`/api/users/${id}/verify`, {
+  const response: any = await apiInstance.patch(`/api/users/${id}/verify`, {
     id: id,
     verified: v,
   });
@@ -152,7 +157,7 @@ const verifyUser = async (id: string, v: any) => {
 const adminUser = async (id: string, v: any) => {
   let newMta = v;
   newMta["admin"] = !v["admin"];
-  const response = await axios.patch(`/api/users/${id}/changeRole`, {
+  const response = await apiInstance.patch(`/api/users/${id}/changeRole`, {
     id: id,
     isadmin: newMta,
   });
