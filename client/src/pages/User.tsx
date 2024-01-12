@@ -28,7 +28,7 @@ const User = () => {
   const ratingsChart = filterRates(data?.ratings || []);
   return (
     <Container size={1200}>
-      <Paper p="lg" my="lg">
+      <Paper p="lg" my="lg" style={{borderRadius:"10px",height:"14rem",paddingTop:"2rem"}}>
         <Flex justify={"center"}>
           <Group>
             <Avatar
@@ -38,7 +38,8 @@ const User = () => {
               alt={`Profile image of ${user?.fullName}`}
             />
             <Text size={30} ml={50} mr={-10} weight={"bold"}>
-              {user?.fullName}
+              {user?.fullName}<br/>
+              
             </Text>
             <>
               {user?.unsafeMetadata!["verified"] && (
@@ -48,7 +49,7 @@ const User = () => {
           </Group>
         </Flex>
       </Paper>
-      <Paper mt={10} p="lg" my="lg">
+      <Paper mt={10} p="lg" my="lg" style={{borderRadius:"10px"}}>
         <Text weight={"bold"} size={"xl"} align="center" mb={20}>
           Statistics & Information
         </Text>
@@ -92,6 +93,14 @@ const User = () => {
 
           <Tabs.Panel value="Information" pt="xs">
             <Flex justify={"center"}>
+              <Text size={"xl"} color="dimmed">
+                Email:
+              </Text>
+              <Text ml={10} size={"xl"} style={{marginBottom:"1rem"}}>
+              {" "+String(user?.emailAddresses)}
+              </Text>
+            </Flex>
+            <Flex justify={"center"}>
               <Text size={"xl"} color="dimmed" mb={10}>
                 Join Date:
               </Text>
@@ -104,7 +113,7 @@ const User = () => {
                 Last Active:
               </Text>
               <Text ml={10} size={"xl"}>
-                {timeAgo(String(user?.lastSignInAt))}
+                {timeAgo(String(user?.lastSignInAt))}               
               </Text>
             </Flex>
           </Tabs.Panel>

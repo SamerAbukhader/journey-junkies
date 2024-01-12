@@ -278,7 +278,7 @@ const Write = () => {
           </RichTextEditor.Toolbar>
           <RichTextEditor.Content />
         </RichTextEditor>
-        <Button type="submit" fullWidth mt="lg">
+        <Button type="submit" fullWidth mt="lg" style={{marginBottom:"100px"}}>
           Save
         </Button>
       </Form>
