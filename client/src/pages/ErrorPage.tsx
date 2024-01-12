@@ -57,7 +57,7 @@ const ErrorPage = () => {
         breakpoints={[{ maxWidth: "sm", cols: 1, spacing: 40 }]}
       >
         <Image
-          src="/images/404.svg"
+          src="./images/404.svg"
           className={classes.mobileImage}
           alt="404 error illustration"
         />
@@ -79,7 +79,11 @@ const ErrorPage = () => {
             </Button>
           </Link>
         </div>
-        <Image src="/images/404.svg" className={classes.desktopImage} alt="404 error image"/>
+        <Image
+          src="./images/404.svg"
+          className={classes.desktopImage}
+          alt="404 error image"
+        />
       </SimpleGrid>
     </Container>
   );
