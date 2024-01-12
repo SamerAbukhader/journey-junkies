@@ -32,8 +32,8 @@ const User = () => {
           <Group>
             <Avatar size={150} src={user?.profileImageUrl} radius={150} alt={`Profile image of ${user?.fullName}`} />
             <Text size={30} ml={50} mr={-10} weight={"bold"}>
-              {"Name: "+user?.fullName}<br/>
-              {"Email: "+String(user?.emailAddresses)}
+              {user?.fullName}<br/>
+              
             </Text>
             <>
               {user?.unsafeMetadata!["verified"] && (
@@ -87,6 +87,14 @@ const User = () => {
 
           <Tabs.Panel value="Information" pt="xs">
             <Flex justify={"center"}>
+              <Text size={"xl"} color="dimmed">
+                Email:
+              </Text>
+              <Text ml={10} size={"xl"} style={{marginBottom:"1rem"}}>
+              {" "+String(user?.emailAddresses)}
+              </Text>
+            </Flex>
+            <Flex justify={"center"}>
               <Text size={"xl"} color="dimmed" mb={10}>
                 Join Date:
               </Text>
@@ -99,7 +107,7 @@ const User = () => {
                 Last Active:
               </Text>
               <Text ml={10} size={"xl"}>
-                {timeAgo(String(user?.lastSignInAt))}
+                {timeAgo(String(user?.lastSignInAt))}               
               </Text>
             </Flex>
           </Tabs.Panel>

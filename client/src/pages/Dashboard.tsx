@@ -26,7 +26,6 @@ import ErrorPage from "./ErrorPage";
 import { useUser } from "@clerk/clerk-react";
 import { useState } from "react";
 
-
 const Dashboard = () => {
   const users = useLoaderData() as LoaderData<typeof dashboardLoader>;
   const theme = useMantineTheme();
@@ -131,9 +130,7 @@ const Dashboard = () => {
         </Form>
       </td>
     </tr>
-    
   ));
-  
 
   return user?.unsafeMetadata["admin"] ? (
     <Container>
