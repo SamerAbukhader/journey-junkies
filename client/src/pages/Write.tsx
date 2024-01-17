@@ -153,43 +153,38 @@ const Write = () => {
             margin: "0 auto",
           }}
         >
-          <LoadScript
-            googleMapsApiKey="AIzaSyB_dpImNu2XvLmYc91JsHg_Ll5bUlvqJpQ"
-            libraries={["places"]}
+          <div
+            style={{ width: "100%", maxWidth: "600px", marginBottom: "10px" }}
           >
-            <div
-              style={{ width: "100%", maxWidth: "600px", marginBottom: "10px" }}
+            <Autocomplete
+              onLoad={(autocomplete) => setAutocomplete(autocomplete)}
+              onPlaceChanged={onPlaceChanged}
             >
-              <Autocomplete
-                onLoad={(autocomplete) => setAutocomplete(autocomplete)}
-                onPlaceChanged={onPlaceChanged}
-              >
-                <input
-                  type="text"
-                  placeholder="Search location"
-                  style={{
-                    width: "100%",
-                    padding: "10px",
-                    borderRadius: "4px",
-                    border: "1px solid #ccc",
-                  }}
-                />
-              </Autocomplete>
-            </div>
-            <GoogleMap
-              mapContainerStyle={{ width: "100%", height: "400px" }}
-              zoom={10}
-              center={markerPosition}
-              onClick={(e) => {
-                setMarkerPosition({
-                  lat: e.latLng?.lat() || 0,
-                  lng: e.latLng?.lng() || 0,
-                });
-              }}
-            >
-              {markerPosition && <MarkerF position={markerPosition} />}
-            </GoogleMap>
-          </LoadScript>
+              <input
+                type="text"
+                placeholder="Search location"
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  borderRadius: "4px",
+                  border: "1px solid #ccc",
+                }}
+              />
+            </Autocomplete>
+          </div>
+          <GoogleMap
+            mapContainerStyle={{ width: "100%", height: "400px" }}
+            zoom={10}
+            center={markerPosition}
+            onClick={(e) => {
+              setMarkerPosition({
+                lat: e.latLng?.lat() || 0,
+                lng: e.latLng?.lng() || 0,
+              });
+            }}
+          >
+            {markerPosition && <MarkerF position={markerPosition} />}
+          </GoogleMap>
         </div>
 
         <FileInput
@@ -278,7 +273,12 @@ const Write = () => {
           </RichTextEditor.Toolbar>
           <RichTextEditor.Content />
         </RichTextEditor>
-        <Button type="submit" fullWidth mt="lg" style={{marginBottom:"100px"}}>
+        <Button
+          type="submit"
+          fullWidth
+          mt="lg"
+          style={{ marginBottom: "100px" }}
+        >
           Save
         </Button>
       </Form>
