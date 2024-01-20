@@ -71,7 +71,11 @@ const Post = () => {
                 width={160}
               >
                 <Menu.Target>
-                  <IconSettings size={24} cursor="pointer" aria-label="Post settings" />
+                  <IconSettings
+                    size={24}
+                    cursor="pointer"
+                    aria-label="Post settings"
+                  />
                 </Menu.Target>
                 {/* Edit and delete options in the dropdown */}
                 <Menu.Dropdown>
@@ -126,15 +130,13 @@ const Post = () => {
             mih="100%"
           />
           {/* Google Map */}
-          <LoadScript googleMapsApiKey="Your_API_Key">
-            <GoogleMap
-              mapContainerStyle={{ width: "100%", height: "400px" }}
-              zoom={10}
-              center={markerPosition}
-            >
-              {markerPosition && <MarkerF position={markerPosition} />}
-            </GoogleMap>
-          </LoadScript>
+          <GoogleMap
+            mapContainerStyle={{ width: "100%", height: "400px" }}
+            zoom={10}
+            center={markerPosition}
+          >
+            {markerPosition && <MarkerF position={markerPosition} />}
+          </GoogleMap>
         </Flex>
 
         {/* Parse and display HTML content */}

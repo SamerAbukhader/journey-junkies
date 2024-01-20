@@ -1,7 +1,12 @@
 import { LoaderFunction } from "react-router-dom";
 import { Post } from "../types";
 import axios, { AxiosResponse } from "axios";
-import dummyData, { fetchRandomImages } from "../data";
+
+// // Create an Axios instance with a custom base URL
+// const apiInstance = axios.create({
+//   baseURL: "http://journyjunkies.ddns.net:8081",
+// });
+
 interface HomePageLoader {
   message: string;
 }

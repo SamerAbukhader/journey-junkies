@@ -28,12 +28,15 @@ import {
   postsLoader,
   profilePageLoader
 } from "./loaders";
+import { Footer } from "./components/UI/Footer";
 
 function App() {
   const { user } = useUser();
 
   const newRouter = createBrowserRouter(
+      
     createRoutesFromElements(
+     
       <Route path="/" element={<Container />} errorElement={<Error />}>
         <Route index element={<Home />} loader={postsLoader} />
         <Route
@@ -62,6 +65,7 @@ function App() {
           loader={profilePageLoader(user?.id ?? "")}
         />
       </Route>
+      
     )
   );
 
