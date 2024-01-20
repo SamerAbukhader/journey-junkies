@@ -10,6 +10,7 @@ import {
 } from "@mantine/core";
 import { Link } from "react-router-dom";
 
+// Create Mantine styles
 const useStyles = createStyles((theme) => ({
   root: {
     paddingTop: rem(80),
@@ -51,23 +52,29 @@ const ErrorPage = () => {
 
   return (
     <Container className={classes.root}>
+      {/* Grid layout with responsive columns */}
       <SimpleGrid
         spacing={80}
         cols={2}
         breakpoints={[{ maxWidth: "sm", cols: 1, spacing: 40 }]}
       >
+        {/* Mobile image section */}
         <Image
           src="./images/404.svg"
           className={classes.mobileImage}
           alt="404 error illustration"
         />
+        {/* Content section */}
         <div>
+          {/* Error title */}
           <Title className={classes.title}>Something is not right...</Title>
+          {/* Error description */}
           <Text color="dimmed" size="lg">
             Page you are trying to open does not exist. You may have mistyped
             the address, or the page has been moved to another URL. If you think
-            this is an error contact support.
+            this is an error, contact support.
           </Text>
+          {/* Link to home page */}
           <Link to="/">
             <Button
               variant="outline"
@@ -75,10 +82,11 @@ const ErrorPage = () => {
               mt="xl"
               className={classes.control}
             >
-              Get back to home page
+              Get back to the home page
             </Button>
           </Link>
         </div>
+        {/* Desktop image section */}
         <Image
           src="./images/404.svg"
           className={classes.desktopImage}
@@ -88,4 +96,5 @@ const ErrorPage = () => {
     </Container>
   );
 };
+
 export default ErrorPage;

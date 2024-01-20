@@ -3,6 +3,7 @@ import pool from "../DB/index.js";
 
 const Comments = express.Router();
 
+// get operations//
 // ========= GET ALL COMMENTS FOR A POST ========= //
 Comments.get("/:postId", async (req, res) => {
   const postId = req.params.postId;
@@ -12,6 +13,30 @@ Comments.get("/:postId", async (req, res) => {
       connection.query(
         "SELECT * from comments WHERE post_id = ?",
         [postId],
+        (err, rows) => {
+          connection.release(); // return the connection to pool
+          if (!err) {
+            res.send(rows);
+          } else {
+            console.log(err);
+          }
+        }
+      );
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred" });
+  }
+});
+// ========== GET ALL COMMENTS FOR A USER ========= //
+Comments.get("/user/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    pool.getConnection((err, connection) => {
+      if (err) throw err;
+      connection.query(
+        "SELECT * from comments WHERE author_id = ?",
+        [userId],
         (err, rows) => {
           connection.release(); // return the connection to pool
           if (!err) {
@@ -58,6 +83,7 @@ Comments.post("/", async (req, res) => {
   }
 });
 
+//delete operations
 // ========= DELETE COMMENT ========= //
 Comments.delete("/:id", async (req, res) => {
   const id = req.params.id;
@@ -82,6 +108,31 @@ Comments.delete("/:id", async (req, res) => {
     res.status(500).json({ error: "An error occurred" });
   }
 });
+// ========== DELETE ALL COMMENTS FOR A USER ========= //
+Comments.delete("/user/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    pool.getConnection((err, connection) => {
+      if (err) throw err;
+      connection.query(
+        "DELETE FROM comments WHERE author_id = ?",
+        [userId],
+        (err, result) => {
+          connection.release(); // return the connection to pool
+          if (!err) {
+            res.send(result);
+          } else {
+            console.log(err);
+          }
+        }
+      );
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred" });
+  }
+});
+export default Comments;
 
 // ========= EDIT COMMENT ========= //
 Comments.put("/:id", async (req, res) => {
@@ -114,53 +165,6 @@ Comments.put("/:id", async (req, res) => {
   }
 });
 
-// ========== GET ALL COMMENTS FOR A USER ========= //
-Comments.get("/user/:userId", async (req, res) => {
-  const userId = req.params.userId;
-  try {
-    pool.getConnection((err, connection) => {
-      if (err) throw err;
-      connection.query(
-        "SELECT * from comments WHERE author_id = ?",
-        [userId],
-        (err, rows) => {
-          connection.release(); // return the connection to pool
-          if (!err) {
-            res.send(rows);
-          } else {
-            console.log(err);
-          }
-        }
-      );
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "An error occurred" });
-  }
-});
 
-// ========== DELETE ALL COMMENTS FOR A USER ========= //
-Comments.delete("/user/:userId", async (req, res) => {
-  const userId = req.params.userId;
-  try {
-    pool.getConnection((err, connection) => {
-      if (err) throw err;
-      connection.query(
-        "DELETE FROM comments WHERE author_id = ?",
-        [userId],
-        (err, result) => {
-          connection.release(); // return the connection to pool
-          if (!err) {
-            res.send(result);
-          } else {
-            console.log(err);
-          }
-        }
-      );
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "An error occurred" });
-  }
-});
-export default Comments;
+
+

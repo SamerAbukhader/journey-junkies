@@ -42,16 +42,21 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const EditPost = () => {
+  // Load post data using the editPostLoader
   const post = useLoaderData() as LoaderData<typeof editPostLoader>;
+  // Extract classes from Mantine styles
   const { classes } = useStyles();
+  // State for managing form inputs
   const [title, setTitle] = useState<string>(post.title);
   const [description, setDescription] = useState<string>(post.description);
   const [tag, setTag] = useState<string>(post.tag);
   const [location, setLocation] = useState<string>(post.location);
   const [content, setContent] = useState<string>(post.content);
   const [image, setImage] = useState<string>(post.image);
+  // Authentication hook from Clerk
   const { userId } = useAuth();
 
+  // Initialize Tiptap editor
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -64,19 +69,23 @@ const EditPost = () => {
     ],
     content,
     onUpdate({ editor }) {
+      // Update content state on editor changes
       setContent(editor.getHTML());
     },
   });
 
   return (
     <Container>
+      {/* Post title */}
       <Title className={classes.title} mb="lg">
         <Text component="span" inherit className={classes.highlight}>
           Edit{" "}
         </Text>
         {post.title}
       </Title>
+      {/* Post edit form */}
       <Form method="post">
+        {/* Title input */}
         <TextInput
           placeholder="your amazing blog title"
           label="Title"
@@ -88,6 +97,7 @@ const EditPost = () => {
           mb={rem(16)}
           aria-label="Enter your blog title"
         />
+        {/* Description input */}
         <TextInput
           placeholder="add a short description"
           label="Description"
@@ -99,6 +109,7 @@ const EditPost = () => {
           mb={rem(16)}
           aria-label="Enter a short description"
         />
+        {/* Tag input */}
         <TextInput
           placeholder="add a post tag"
           label="Tag"
@@ -110,6 +121,7 @@ const EditPost = () => {
           mb={rem(16)}
           aria-label="Add a post tag"
         />
+        {/* Location dropdown */}
         <Select
           label="location"
           placeholder="Post location"
@@ -121,6 +133,7 @@ const EditPost = () => {
           name="location"
           aria-label="Select post location"
         />
+        {/* Banner Image input */}
         <FileInput
           label="Banner Image"
           placeholder="Select image"
@@ -130,6 +143,7 @@ const EditPost = () => {
           required
           aria-label="Upload banner image"
           onChange={async (payload: File | null) => {
+            // Convert and set image state on file selection
             if (payload !== null) {
               setImage(await convertToBase64(payload));
             }
@@ -138,7 +152,9 @@ const EditPost = () => {
           clearable
           accept="image/*"
         />
+        {/* Display image preview if available */}
         {image && <img src={image} alt="banner" width="100%" />}
+        {/* Hidden inputs for form data */}
         <Input
           readOnly
           value={content}
@@ -156,9 +172,12 @@ const EditPost = () => {
           required
           aria-hidden="true"
         />
+        {/* Label for rich text editor */}
         <Input.Label>Content</Input.Label>
+        {/* Rich text editor with toolbar and content */}
         <RichTextEditor editor={editor}>
           <RichTextEditor.Toolbar sticky stickyOffset={60}>
+            {/* Toolbar controls for text formatting */}
             <RichTextEditor.ControlsGroup>
               <RichTextEditor.Bold />
               <RichTextEditor.Italic />
@@ -168,12 +187,14 @@ const EditPost = () => {
               <RichTextEditor.Highlight />
               <RichTextEditor.Code />
             </RichTextEditor.ControlsGroup>
+            {/* Toolbar controls for headings */}
             <RichTextEditor.ControlsGroup>
               <RichTextEditor.H1 />
               <RichTextEditor.H2 />
               <RichTextEditor.H3 />
               <RichTextEditor.H4 />
             </RichTextEditor.ControlsGroup>
+            {/* Toolbar controls for block elements */}
             <RichTextEditor.ControlsGroup>
               <RichTextEditor.Blockquote />
               <RichTextEditor.Hr />
@@ -182,10 +203,12 @@ const EditPost = () => {
               <RichTextEditor.Subscript />
               <RichTextEditor.Superscript />
             </RichTextEditor.ControlsGroup>
+            {/* Toolbar controls for links */}
             <RichTextEditor.ControlsGroup>
               <RichTextEditor.Link />
               <RichTextEditor.Unlink />
             </RichTextEditor.ControlsGroup>
+            {/* Toolbar controls for text alignment */}
             <RichTextEditor.ControlsGroup>
               <RichTextEditor.AlignLeft />
               <RichTextEditor.AlignCenter />
@@ -193,8 +216,10 @@ const EditPost = () => {
               <RichTextEditor.AlignRight />
             </RichTextEditor.ControlsGroup>
           </RichTextEditor.Toolbar>
+          {/* Content area of the rich text editor */}
           <RichTextEditor.Content />
         </RichTextEditor>
+        {/* Submit button */}
         <Button type="submit" fullWidth mt="lg">
           Save
         </Button>

@@ -1,16 +1,14 @@
 import { NonIndexRouteObject, redirect, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-// // Create an Axios instance with a custom base URL
-// const apiInstance = axios.create({
-//   baseURL: "http://journyjunkies.ddns.net:8081",
-// });
-
+// Action for creating a new post
 export const newPostAction: NonIndexRouteObject["action"] = async ({
   request,
 }) => {
+  // Parse form data
   const data = await request.formData();
   const post = {
+    // Extract post data from form
     title: data.get("title"),
     description: data.get("description"),
     location: data.get("location"),
@@ -20,20 +18,27 @@ export const newPostAction: NonIndexRouteObject["action"] = async ({
     author: data.get("author"),
     map_coords: data.get("map_coords"),
   };
+  // Send post data to the server
   await axios.post("/api/posts", post);
+  // Redirect to the home page after successful post creation
   return redirect("/");
 };
 
+// Actions for post page interactions (delete, comment, rate)
 export const postPageActions: NonIndexRouteObject["action"] = async ({
   params,
   request,
 }) => {
   let formData = await request.formData();
   let intent = formData.get("intent");
+
+  // Delete post
   if (intent === "delete") {
     await axios.delete(`/api/posts/${params.id}`);
     return redirect("/");
   }
+
+  // Add comment to post
   if (intent === "comment") {
     await postComment(
       params.id || "",
@@ -43,6 +48,8 @@ export const postPageActions: NonIndexRouteObject["action"] = async ({
     );
     return redirect(`/${params.id}`);
   }
+
+  // Rate post
   if (intent === "rate") {
     await postRating(
       params.id || "",
@@ -54,6 +61,7 @@ export const postPageActions: NonIndexRouteObject["action"] = async ({
   }
 };
 
+// Action for editing an existing post
 export const editPostAction: NonIndexRouteObject["action"] = async ({
   params,
   request,
@@ -69,10 +77,13 @@ export const editPostAction: NonIndexRouteObject["action"] = async ({
     tag: data.get("tag"),
     author: data.get("author"),
   };
+  // Send updated post data to the server
   await axios.put(`/api/posts/${id}`, post);
+  // Redirect to the edited post
   return redirect(`/${id}`);
 };
 
+// Action for dashboard interactions (verify, change role, delete user)
 export const dashboardAction: NonIndexRouteObject["action"] = async ({
   request,
 }) => {
@@ -80,20 +91,26 @@ export const dashboardAction: NonIndexRouteObject["action"] = async ({
   const formValues = formData.get("value");
   const { value, id, metaData } = JSON.parse(String(formValues));
 
+  // Verify user
   if (value === "verify") {
     await verifyUser(id, metaData);
     return redirect("");
   }
+
+  // Change user role
   if (value === "role") {
     await adminUser(id, metaData);
     return redirect("");
   }
+
+  // Delete user
   if (value === "delete") {
     await deleteUser(id);
     return redirect("");
   }
 };
 
+// Helper function for handling post ratings
 const postRating = async (
   postId: string,
   user: string,
@@ -117,6 +134,7 @@ const postRating = async (
   }
 };
 
+// Helper function for handling post comments
 const postComment = async (
   postId: string,
   comment: string,
@@ -131,13 +149,14 @@ const postComment = async (
   });
 };
 
+// Helper function for deleting a user and associated posts, comments, and ratings
 const deleteUser = async (id: string) => {
   const response = await axios.delete(`/api/users/${id}`, {
     data: {
       id: id,
     },
   });
-  // if user is deleted, delete all posts and comments and ratings by that user
+  // If user is deleted, delete all posts, comments, and ratings by that user
   if (response.status === 200) {
     await axios.delete(`/api/posts/user/${id}`);
     await axios.delete(`/api/comments/user/${id}`);
@@ -145,6 +164,7 @@ const deleteUser = async (id: string) => {
   }
 };
 
+// Helper function for verifying a user
 const verifyUser = async (id: string, v: any) => {
   let newMta = v;
   newMta["verified"] = !v["verified"];
@@ -154,6 +174,7 @@ const verifyUser = async (id: string, v: any) => {
   });
 };
 
+// Helper function for changing a user's role
 const adminUser = async (id: string, v: any) => {
   let newMta = v;
   newMta["admin"] = !v["admin"];
